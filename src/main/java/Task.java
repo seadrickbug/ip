@@ -1,3 +1,6 @@
+/**
+ * Represents a task tracked by Computah.
+ */
 public class Task {
     protected String description;
     protected boolean isDone;
@@ -11,6 +14,10 @@ public class Task {
         return isDone ? "X" : " ";
     }
 
+    public String getTaskType() {
+        return "";
+    }
+
     public void markAsDone() {
         isDone = true;
     }
@@ -21,6 +28,6 @@ public class Task {
 
     @Override
     public String toString() {
-        return "[" + getStatusIcon() + "] " + description;
+        return "[" + getTaskType() + "][" + getStatusIcon() + "] " + description;
     }
 }
