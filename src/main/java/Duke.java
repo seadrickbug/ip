@@ -21,56 +21,120 @@ public class Duke {
         while (scanner.hasNextLine()) {
             String input = scanner.nextLine();
             System.out.println(line);
-            if (input.equals("bye")) {
-                System.out.println("Bye. Hope to see you again soon!");
-                System.out.println(line);
-                break;
-            }
-            if (input.equals("list")) {
-                System.out.println("Here are the tasks in your list:");
-                for (int i = 0; i < taskCount; i++) {
-                    System.out.println((i + 1) + "." + tasks[i]);
+            try {
+                if (input.equals("bye")) {
+                    System.out.println("Bye. Hope to see you again soon!");
+                    System.out.println(line);
+                    break;
                 }
+                if (input.equals("list")) {
+                    System.out.println("Here are the tasks in your list:");
+                    for (int i = 0; i < taskCount; i++) {
+                        System.out.println((i + 1) + "." + tasks[i]);
+                    }
+                    System.out.println(line);
+                    continue;
+                }
+                if (input.startsWith("unmark")) {
+                    int taskIndex = getTaskIndex(input, "unmark", taskCount);
+                    tasks[taskIndex].markAsNotDone();
+                    System.out.println("OK, I've marked this task as not done yet:");
+                    System.out.println("  " + tasks[taskIndex]);
+                    System.out.println(line);
+                    continue;
+                }
+                if (input.startsWith("mark")) {
+                    int taskIndex = getTaskIndex(input, "mark", taskCount);
+                    tasks[taskIndex].markAsDone();
+                    System.out.println("Nice! I've marked this task as done:");
+                    System.out.println("  " + tasks[taskIndex]);
+                    System.out.println(line);
+                    continue;
+                }
+                if (taskCount == tasks.length) {
+                    throw new ComputahException("The task list is full.");
+                }
+                tasks[taskCount] = createTask(input);
+                taskCount++;
+                System.out.println("Got it. I've added this task:");
+                System.out.println("  " + tasks[taskCount - 1]);
+                System.out.println("Now you have " + taskCount + " tasks in the list.");
                 System.out.println(line);
-                continue;
-            }
-            if (input.startsWith("unmark ")) {
-                int taskNumber = Integer.parseInt(input.substring(7));
-                int taskIndex = taskNumber - 1;
-                tasks[taskIndex].markAsNotDone();
-                System.out.println("OK, I've marked this task as not done yet:");
-                System.out.println("  " + tasks[taskIndex]);
+            } catch (ComputahException e) {
+                System.out.println("OOPS!!! " + e.getMessage());
                 System.out.println(line);
-                continue;
             }
-            if (input.startsWith("mark ")) {
-                int taskNumber = Integer.parseInt(input.substring(5));
-                int taskIndex = taskNumber - 1;
-                tasks[taskIndex].markAsDone();
-                System.out.println("Nice! I've marked this task as done:");
-                System.out.println("  " + tasks[taskIndex]);
-                System.out.println(line);
-                continue;
-            }
-            if (input.startsWith("todo ")) {
-                tasks[taskCount] = new ToDo(input.substring(5));
-            } else if (input.startsWith("deadline ")) {
-                String details = input.substring(9);
-                String[] parts = details.split(" /by ", 2);
-                tasks[taskCount] = new Deadline(parts[0], parts[1]);
-            } else if (input.startsWith("event ")) {
-                String details = input.substring(6);
-                String[] fromParts = details.split(" /from ", 2);
-                String[] toParts = fromParts[1].split(" /to ", 2);
-                tasks[taskCount] = new Event(fromParts[0], toParts[0], toParts[1]);
-            } else {
-                tasks[taskCount] = new ToDo(input);
-            }
-            taskCount++;
-            System.out.println("Got it. I've added this task:");
-            System.out.println("  " + tasks[taskCount - 1]);
-            System.out.println("Now you have " + taskCount + " tasks in the list.");
-            System.out.println(line);
         }
+    }
+
+    /**
+     * Creates the correct task type from a user command.
+     */
+    private static Task createTask(String input) throws ComputahException {
+        if (input.equals("todo")) {
+            throw new ComputahException("The description of a todo cannot be empty.");
+        }
+        if (input.startsWith("todo ")) {
+            String description = input.substring(5).trim();
+            if (description.isEmpty()) {
+                throw new ComputahException("The description of a todo cannot be empty.");
+            }
+            return new ToDo(description);
+        }
+        if (input.equals("deadline")) {
+            throw new ComputahException("The description of a deadline cannot be empty.");
+        }
+        if (input.startsWith("deadline ")) {
+            String details = input.substring(9).trim();
+            String[] parts = details.split(" /by ", 2);
+            if (parts[0].trim().isEmpty()) {
+                throw new ComputahException("The description of a deadline cannot be empty.");
+            }
+            if (parts.length < 2 || parts[1].trim().isEmpty()) {
+                throw new ComputahException("The by date/time of a deadline cannot be empty.");
+            }
+            return new Deadline(parts[0].trim(), parts[1].trim());
+        }
+        if (input.equals("event")) {
+            throw new ComputahException("The description of an event cannot be empty.");
+        }
+        if (input.startsWith("event ")) {
+            String details = input.substring(6).trim();
+            String[] fromParts = details.split(" /from ", 2);
+            if (fromParts[0].trim().isEmpty()) {
+                throw new ComputahException("The description of an event cannot be empty.");
+            }
+            if (fromParts.length < 2) {
+                throw new ComputahException("The start date/time of an event cannot be empty.");
+            }
+            String[] toParts = fromParts[1].split(" /to ", 2);
+            if (toParts[0].trim().isEmpty()) {
+                throw new ComputahException("The start date/time of an event cannot be empty.");
+            }
+            if (toParts.length < 2 || toParts[1].trim().isEmpty()) {
+                throw new ComputahException("The end date/time of an event cannot be empty.");
+            }
+            return new Event(fromParts[0].trim(), toParts[0].trim(), toParts[1].trim());
+        }
+        throw new ComputahException("I'm sorry, but I don't know what that means :-(");
+    }
+
+    /**
+     * Converts a one-based task number from a command into a zero-based array index.
+     */
+    private static int getTaskIndex(String input, String command, int taskCount) throws ComputahException {
+        if (!input.startsWith(command + " ")) {
+            throw new ComputahException("Please specify a task number after " + command + ".");
+        }
+        int taskNumber;
+        try {
+            taskNumber = Integer.parseInt(input.substring(command.length() + 1).trim());
+        } catch (NumberFormatException e) {
+            throw new ComputahException("The task number must be a valid number.");
+        }
+        if (taskNumber < 1 || taskNumber > taskCount) {
+            throw new ComputahException("The task number is not in the list.");
+        }
+        return taskNumber - 1;
     }
 }
