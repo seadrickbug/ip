@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -119,8 +120,7 @@ public class Duke {
             String description = parts[0].trim();
             String by = parts[1].trim();
             validateFileSafeField(description);
-            validateFileSafeField(by);
-            return new Deadline(description, by);
+            return new Deadline(description, DateTimeUtil.parse(by));
         }
         if (input.equals("event")) {
             throw new ComputahException("The description of an event cannot be empty.");
@@ -145,9 +145,7 @@ public class Duke {
             String from = toParts[0].trim();
             String to = toParts[1].trim();
             validateFileSafeField(description);
-            validateFileSafeField(from);
-            validateFileSafeField(to);
-            return new Event(description, from, to);
+            return new Event(description, DateTimeUtil.parse(from), DateTimeUtil.parse(to));
         }
         throw new ComputahException("I'm sorry, but I don't know what that means :-(");
     }
@@ -212,10 +210,10 @@ public class Duke {
             task = new ToDo(parts[2]);
         } else if (parts[0].equals("D")) {
             validateSavedLine(parts, 4);
-            task = new Deadline(parts[2], parts[3]);
+            task = new Deadline(parts[2], parseSavedDateTime(parts[3]));
         } else if (parts[0].equals("E")) {
             validateSavedLine(parts, 5);
-            task = new Event(parts[2], parts[3], parts[4]);
+            task = new Event(parts[2], parseSavedDateTime(parts[3]), parseSavedDateTime(parts[4]));
         } else {
             throw new ComputahException("I could not load the task list.");
         }
@@ -238,6 +236,17 @@ public class Duke {
             if (parts[i].isEmpty()) {
                 throw new ComputahException("I could not load the task list.");
             }
+        }
+    }
+
+    /**
+     * Parses a saved date/time field while keeping save-file errors consistent.
+     */
+    private static LocalDateTime parseSavedDateTime(String text) throws ComputahException {
+        try {
+            return DateTimeUtil.parse(text);
+        } catch (ComputahException e) {
+            throw new ComputahException("I could not load the task list.");
         }
     }
 

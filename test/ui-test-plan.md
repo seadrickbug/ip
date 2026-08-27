@@ -79,8 +79,8 @@ Aim: Verify that `todo`, `deadline`, and `event` commands create tasks with the 
 Inputs:
 ```text
 todo borrow book
-deadline return book /by Sunday
-event project meeting /from Mon 2pm /to 4pm
+deadline return book /by 2019-10-15
+event project meeting /from 2/12/2019 1400 /to 2/12/2019 1600
 list
 bye
 ```
@@ -105,19 +105,19 @@ Now you have 1 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
 Got it. I've added this task:
-  [D][ ] return book (by: Sunday)
+  [D][ ] return book (by: Oct 15 2019)
 Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
 Got it. I've added this task:
-  [E][ ] project meeting (from: Mon 2pm to: 4pm)
+  [E][ ] project meeting (from: Dec 2 2019 2:00 PM to: Dec 2 2019 4:00 PM)
 Now you have 3 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
 1.[T][ ] borrow book
-2.[D][ ] return book (by: Sunday)
-3.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+2.[D][ ] return book (by: Oct 15 2019)
+3.[E][ ] project meeting (from: Dec 2 2019 2:00 PM to: Dec 2 2019 4:00 PM)
 ____________________________________________________________
 ____________________________________________________________
 Bye. Hope to see you again soon!
@@ -205,8 +205,8 @@ Aim: Verify that `delete` removes the specified task and the remaining tasks are
 Inputs:
 ```text
 todo read book
-deadline return book /by June 6th
-event project meeting /from Aug 6th 2pm /to 4pm
+deadline return book /by 2019-06-06
+event project meeting /from 2019-08-06 1400 /to 2019-08-06 1600
 todo join sports club
 todo borrow book
 mark 1
@@ -238,12 +238,12 @@ Now you have 1 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
 Got it. I've added this task:
-  [D][ ] return book (by: June 6th)
+  [D][ ] return book (by: Jun 6 2019)
 Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
 Got it. I've added this task:
-  [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+  [E][ ] project meeting (from: Aug 6 2019 2:00 PM to: Aug 6 2019 4:00 PM)
 Now you have 3 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
@@ -262,7 +262,7 @@ Nice! I've marked this task as done:
 ____________________________________________________________
 ____________________________________________________________
 Nice! I've marked this task as done:
-  [D][X] return book (by: June 6th)
+  [D][X] return book (by: Jun 6 2019)
 ____________________________________________________________
 ____________________________________________________________
 Nice! I've marked this task as done:
@@ -271,20 +271,20 @@ ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
 1.[T][X] read book
-2.[D][X] return book (by: June 6th)
-3.[E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+2.[D][X] return book (by: Jun 6 2019)
+3.[E][ ] project meeting (from: Aug 6 2019 2:00 PM to: Aug 6 2019 4:00 PM)
 4.[T][X] join sports club
 5.[T][ ] borrow book
 ____________________________________________________________
 ____________________________________________________________
 Noted. I've removed this task:
-  [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+  [E][ ] project meeting (from: Aug 6 2019 2:00 PM to: Aug 6 2019 4:00 PM)
 Now you have 4 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
 1.[T][X] read book
-2.[D][X] return book (by: June 6th)
+2.[D][X] return book (by: Jun 6 2019)
 3.[T][X] join sports club
 4.[T][ ] borrow book
 ____________________________________________________________
@@ -300,8 +300,8 @@ Aim: Verify that the chatbot writes the current task list to `data/duke.txt` aft
 Inputs:
 ```text
 todo read book
-deadline return book /by June 6th
-event project meeting /from Aug 6th 2pm /to 4pm
+deadline return book /by 2019-06-06
+event project meeting /from 2019-08-06 1400 /to 2019-08-06 1600
 todo join sports club
 mark 1
 delete 2
@@ -328,12 +328,12 @@ Now you have 1 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
 Got it. I've added this task:
-  [D][ ] return book (by: June 6th)
+  [D][ ] return book (by: Jun 6 2019)
 Now you have 2 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
 Got it. I've added this task:
-  [E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+  [E][ ] project meeting (from: Aug 6 2019 2:00 PM to: Aug 6 2019 4:00 PM)
 Now you have 3 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
@@ -347,7 +347,7 @@ Nice! I've marked this task as done:
 ____________________________________________________________
 ____________________________________________________________
 Noted. I've removed this task:
-  [D][ ] return book (by: June 6th)
+  [D][ ] return book (by: Jun 6 2019)
 Now you have 3 tasks in the list.
 ____________________________________________________________
 ____________________________________________________________
@@ -358,7 +358,7 @@ ____________________________________________________________
 Expected file `data/duke.txt`:
 ```text
 T | 1 | read book
-E | 0 | project meeting | Aug 6th 2pm | 4pm
+E | 0 | project meeting | 2019-08-06 1400 | 2019-08-06 1600
 T | 0 | join sports club
 ```
 
@@ -375,8 +375,8 @@ bye
 Initial file `data/duke.txt`:
 ```text
 T | 1 | read book
-D | 0 | return book | June 6th
-E | 0 | project meeting | Aug 6th 2pm | 4pm
+D | 0 | return book | 2019-06-06
+E | 0 | project meeting | 2019-08-06 1400 | 2019-08-06 1600
 T | 1 | join sports club
 ```
 
@@ -396,8 +396,8 @@ ____________________________________________________________
 ____________________________________________________________
 Here are the tasks in your list:
 1.[T][X] read book
-2.[D][ ] return book (by: June 6th)
-3.[E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+2.[D][ ] return book (by: Jun 6 2019)
+3.[E][ ] project meeting (from: Aug 6 2019 2:00 PM to: Aug 6 2019 4:00 PM)
 4.[T][X] join sports club
 ____________________________________________________________
 ____________________________________________________________
@@ -408,8 +408,8 @@ ____________________________________________________________
 Expected file `data/duke.txt`:
 ```text
 T | 1 | read book
-D | 0 | return book | June 6th
-E | 0 | project meeting | Aug 6th 2pm | 4pm
+D | 0 | return book | 2019-06-06
+E | 0 | project meeting | 2019-08-06 1400 | 2019-08-06 1600
 T | 1 | join sports club
 ```
 
@@ -425,7 +425,7 @@ bye
 
 Initial file `data/duke.txt`:
 ```text
-D | 1 | return book
+D | 1 | return book | Sunday
 ```
 
 Expected output:
@@ -460,6 +460,7 @@ Inputs:
 todo
 blah
 deadline return book
+deadline invalid date /by Sunday
 event meeting /from Mon 2pm
 delete 1
 mark 1
@@ -487,6 +488,9 @@ OOPS!!! I'm sorry, but I don't know what that means :-(
 ____________________________________________________________
 ____________________________________________________________
 OOPS!!! The by date/time of a deadline cannot be empty.
+____________________________________________________________
+____________________________________________________________
+OOPS!!! Date/time must be in yyyy-MM-dd, yyyy-MM-dd HHmm, d/M/yyyy, or d/M/yyyy HHmm format.
 ____________________________________________________________
 ____________________________________________________________
 OOPS!!! The end date/time of an event cannot be empty.
