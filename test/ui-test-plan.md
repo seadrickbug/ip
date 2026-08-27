@@ -198,6 +198,61 @@ Bye. Hope to see you again soon!
 ____________________________________________________________
 ```
 
+## Test Case: Find Tasks By Description
+
+Aim: Verify that `find` displays tasks whose descriptions contain the keyword, without matching date/time fields.
+
+Inputs:
+```text
+todo read book
+deadline return book /by 2019-06-06
+event project meeting /from 2019-08-06 1400 /to 2019-08-06 1600
+find book
+find 2019
+bye
+```
+
+Expected output:
+```text
+____________________________________________________________
+  ____                            _        _
+ / ___|___  _ __ ___  _ __  _   _| |_ __ _| |__
+| |   / _ \| '_ ` _ \| '_ \| | | | __/ _` | '_ \
+| |__| (_) | | | | | | |_) | |_| | || (_| | | | |
+ \____\___/|_| |_| |_| .__/ \__,_|\__\__,_|_| |_|
+                     |_|
+
+Hello! I'm Computah.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] read book
+Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [D][ ] return book (by: Jun 6 2019)
+Now you have 2 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [E][ ] project meeting (from: Aug 6 2019 2:00 PM to: Aug 6 2019 4:00 PM)
+Now you have 3 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+Here are the matching tasks in your list:
+1.[T][ ] read book
+2.[D][ ] return book (by: Jun 6 2019)
+____________________________________________________________
+____________________________________________________________
+Here are the matching tasks in your list:
+____________________________________________________________
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
 ## Test Case: Delete Task
 
 Aim: Verify that `delete` removes the specified task and the remaining tasks are renumbered.
@@ -462,6 +517,7 @@ blah
 deadline return book
 deadline invalid date /by Sunday
 event meeting /from Mon 2pm
+find
 delete 1
 mark 1
 bye
@@ -494,6 +550,9 @@ OOPS!!! Date/time must be in yyyy-MM-dd, yyyy-MM-dd HHmm, d/M/yyyy, or d/M/yyyy 
 ____________________________________________________________
 ____________________________________________________________
 OOPS!!! The end date/time of an event cannot be empty.
+____________________________________________________________
+____________________________________________________________
+OOPS!!! The keyword of a find command cannot be empty.
 ____________________________________________________________
 ____________________________________________________________
 OOPS!!! The task number is not in the list.

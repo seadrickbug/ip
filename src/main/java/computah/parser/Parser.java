@@ -4,6 +4,7 @@ import computah.command.AddCommand;
 import computah.command.Command;
 import computah.command.DeleteCommand;
 import computah.command.ExitCommand;
+import computah.command.FindCommand;
 import computah.command.ListCommand;
 import computah.command.MarkCommand;
 import computah.command.UnmarkCommand;
@@ -41,6 +42,16 @@ public class Parser {
         }
         if (input.equals("list")) {
             return new ListCommand();
+        }
+        if (input.equals("find")) {
+            throw new ComputahException("The keyword of a find command cannot be empty.");
+        }
+        if (input.startsWith("find ")) {
+            String keyword = input.substring(5).trim();
+            if (keyword.isEmpty()) {
+                throw new ComputahException("The keyword of a find command cannot be empty.");
+            }
+            return new FindCommand(keyword);
         }
         if (input.startsWith("delete")) {
             return new DeleteCommand(getTaskIndex(input, "delete", taskCount));
