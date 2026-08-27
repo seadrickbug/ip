@@ -1,3 +1,5 @@
+package computah.exception;
+
 /**
  * Represents an error caused by invalid Computah user input.
  */

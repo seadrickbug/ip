@@ -1,3 +1,12 @@
+package computah;
+
+import computah.command.Command;
+import computah.exception.ComputahException;
+import computah.parser.Parser;
+import computah.storage.Storage;
+import computah.task.Task;
+import computah.ui.Ui;
+
 import java.util.ArrayList;
 
 public class Duke {

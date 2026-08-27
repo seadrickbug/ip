@@ -65,7 +65,7 @@ def parse_plan(plan_path):
 
 
 def compile_sources(project_root, build_dir):
-    source_files = sorted((project_root / "src/main/java").glob("*.java"))
+    source_files = sorted((project_root / "src/main/java").rglob("*.java"))
     if not source_files:
         raise ValueError("No Java source files found in src/main/java")
     if build_dir.exists():
@@ -118,7 +118,7 @@ def print_transcript(test_case, actual):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--plan", default="test/ui-test-plan.md")
-    parser.add_argument("--main-class", default="Duke")
+    parser.add_argument("--main-class", default="computah.Duke")
     parser.add_argument("--build-dir", default="/tmp/cs2103-ip-ui-tests")
     args = parser.parse_args()
 

@@ -1,3 +1,5 @@
+package computah.task;
+
 /**
  * Represents a task tracked by Computah.
  */
