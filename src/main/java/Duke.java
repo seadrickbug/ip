@@ -28,7 +28,7 @@ public class Duke {
         }
         Scanner scanner = new Scanner(System.in);
         while (scanner.hasNextLine()) {
-            String input = scanner.nextLine();
+            String input = scanner.nextLine().trim();
             System.out.println(line);
             try {
                 if (input.equals("bye")) {
@@ -90,6 +90,9 @@ public class Duke {
      * Creates the correct task type from a user command.
      */
     private static Task createTask(String input) throws ComputahException {
+        if (input.isEmpty()) {
+            throw new ComputahException("Please enter a command.");
+        }
         if (input.equals("todo")) {
             throw new ComputahException("The description of a todo cannot be empty.");
         }
@@ -98,6 +101,7 @@ public class Duke {
             if (description.isEmpty()) {
                 throw new ComputahException("The description of a todo cannot be empty.");
             }
+            validateFileSafeField(description);
             return new ToDo(description);
         }
         if (input.equals("deadline")) {
@@ -112,7 +116,11 @@ public class Duke {
             if (parts.length < 2 || parts[1].trim().isEmpty()) {
                 throw new ComputahException("The by date/time of a deadline cannot be empty.");
             }
-            return new Deadline(parts[0].trim(), parts[1].trim());
+            String description = parts[0].trim();
+            String by = parts[1].trim();
+            validateFileSafeField(description);
+            validateFileSafeField(by);
+            return new Deadline(description, by);
         }
         if (input.equals("event")) {
             throw new ComputahException("The description of an event cannot be empty.");
@@ -133,9 +141,24 @@ public class Duke {
             if (toParts.length < 2 || toParts[1].trim().isEmpty()) {
                 throw new ComputahException("The end date/time of an event cannot be empty.");
             }
-            return new Event(fromParts[0].trim(), toParts[0].trim(), toParts[1].trim());
+            String description = fromParts[0].trim();
+            String from = toParts[0].trim();
+            String to = toParts[1].trim();
+            validateFileSafeField(description);
+            validateFileSafeField(from);
+            validateFileSafeField(to);
+            return new Event(description, from, to);
         }
         throw new ComputahException("I'm sorry, but I don't know what that means :-(");
+    }
+
+    /**
+     * Rejects text that cannot be safely stored in the current save-file format.
+     */
+    private static void validateFileSafeField(String field) throws ComputahException {
+        if (field.contains(" | ")) {
+            throw new ComputahException("Task details cannot contain \" | \".");
+        }
     }
 
     /**
@@ -179,21 +202,43 @@ public class Duke {
      * Creates a task from one line in the saved task file.
      */
     private static Task createTaskFromFileString(String line) throws ComputahException {
-        String[] parts = line.split(" \\| ");
+        String[] parts = line.split(" \\| ", -1);
+        if (parts.length < 3) {
+            throw new ComputahException("I could not load the task list.");
+        }
         Task task;
         if (parts[0].equals("T")) {
+            validateSavedLine(parts, 3);
             task = new ToDo(parts[2]);
         } else if (parts[0].equals("D")) {
+            validateSavedLine(parts, 4);
             task = new Deadline(parts[2], parts[3]);
         } else if (parts[0].equals("E")) {
+            validateSavedLine(parts, 5);
             task = new Event(parts[2], parts[3], parts[4]);
         } else {
             throw new ComputahException("I could not load the task list.");
         }
         if (parts[1].equals("1")) {
             task.markAsDone();
+        } else if (!parts[1].equals("0")) {
+            throw new ComputahException("I could not load the task list.");
         }
         return task;
+    }
+
+    /**
+     * Checks that a saved task line has the exact number of fields and no empty data fields.
+     */
+    private static void validateSavedLine(String[] parts, int expectedLength) throws ComputahException {
+        if (parts.length != expectedLength || parts[2].isEmpty()) {
+            throw new ComputahException("I could not load the task list.");
+        }
+        for (int i = 3; i < parts.length; i++) {
+            if (parts[i].isEmpty()) {
+                throw new ComputahException("I could not load the task list.");
+            }
+        }
     }
 
     /**
