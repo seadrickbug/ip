@@ -7,82 +7,54 @@ import java.util.Scanner;
 
 public class Duke {
     public static void main(String[] args) {
-        String line = "____________________________________________________________";
-        String banner = "  ____                            _        _     \n"
-                + " / ___|___  _ __ ___  _ __  _   _| |_ __ _| |__  \n"
-                + "| |   / _ \\| '_ ` _ \\| '_ \\| | | | __/ _` | '_ \\ \n"
-                + "| |__| (_) | | | | | | |_) | |_| | || (_| | | | |\n"
-                + " \\____\\___/|_| |_| |_| .__/ \\__,_|\\__\\__,_|_| |_|\n"
-                + "                     |_|                          \n";
-        System.out.println(line);
-        System.out.println(banner);
-        System.out.println("Hello! I'm Computah.");
-        System.out.println("What can I do for you?");
-        System.out.println(line);
+        Ui ui = new Ui();
+        ui.showWelcome();
 
         ArrayList<Task> tasks = new ArrayList<>();
         try {
             tasks = loadTasks();
         } catch (ComputahException e) {
-            System.out.println("OOPS!!! " + e.getMessage());
-            System.out.println(line);
+            ui.showError(e.getMessage());
         }
-        Scanner scanner = new Scanner(System.in);
-        while (scanner.hasNextLine()) {
-            String input = scanner.nextLine().trim();
-            System.out.println(line);
+        while (ui.hasNextCommand()) {
+            String input = ui.readCommand();
+            ui.showLine();
             try {
                 if (input.equals("bye")) {
-                    System.out.println("Bye. Hope to see you again soon!");
-                    System.out.println(line);
+                    ui.showFarewell();
                     break;
                 }
                 if (input.equals("list")) {
-                    System.out.println("Here are the tasks in your list:");
-                    for (int i = 0; i < tasks.size(); i++) {
-                        System.out.println((i + 1) + "." + tasks.get(i));
-                    }
-                    System.out.println(line);
+                    ui.showTaskList(tasks);
                     continue;
                 }
                 if (input.startsWith("delete")) {
                     int taskIndex = getTaskIndex(input, "delete", tasks.size());
                     Task removedTask = tasks.remove(taskIndex);
                     saveTasks(tasks);
-                    System.out.println("Noted. I've removed this task:");
-                    System.out.println("  " + removedTask);
-                    System.out.println("Now you have " + tasks.size() + " tasks in the list.");
-                    System.out.println(line);
+                    ui.showTaskDeleted(removedTask, tasks.size());
                     continue;
                 }
                 if (input.startsWith("unmark")) {
                     int taskIndex = getTaskIndex(input, "unmark", tasks.size());
                     tasks.get(taskIndex).markAsNotDone();
                     saveTasks(tasks);
-                    System.out.println("OK, I've marked this task as not done yet:");
-                    System.out.println("  " + tasks.get(taskIndex));
-                    System.out.println(line);
+                    ui.showTaskUnmarked(tasks.get(taskIndex));
                     continue;
                 }
                 if (input.startsWith("mark")) {
                     int taskIndex = getTaskIndex(input, "mark", tasks.size());
                     tasks.get(taskIndex).markAsDone();
                     saveTasks(tasks);
-                    System.out.println("Nice! I've marked this task as done:");
-                    System.out.println("  " + tasks.get(taskIndex));
-                    System.out.println(line);
+                    ui.showTaskMarked(tasks.get(taskIndex));
                     continue;
                 }
                 Task task = createTask(input);
                 tasks.add(task);
                 saveTasks(tasks);
-                System.out.println("Got it. I've added this task:");
-                System.out.println("  " + task);
-                System.out.println("Now you have " + tasks.size() + " tasks in the list.");
-                System.out.println(line);
+                ui.showTaskAdded(task, tasks.size());
             } catch (ComputahException e) {
-                System.out.println("OOPS!!! " + e.getMessage());
-                System.out.println(line);
+                ui.showError(e.getMessage());
             }
         }
     }
