@@ -20,6 +20,12 @@ public class Duke {
         System.out.println(line);
 
         ArrayList<Task> tasks = new ArrayList<>();
+        try {
+            tasks = loadTasks();
+        } catch (ComputahException e) {
+            System.out.println("OOPS!!! " + e.getMessage());
+            System.out.println(line);
+        }
         Scanner scanner = new Scanner(System.in);
         while (scanner.hasNextLine()) {
             String input = scanner.nextLine();
@@ -148,6 +154,46 @@ public class Duke {
         } catch (IOException e) {
             throw new ComputahException("I could not save the task list.");
         }
+    }
+
+    /**
+     * Loads saved tasks from the hard disk.
+     */
+    private static ArrayList<Task> loadTasks() throws ComputahException {
+        ArrayList<Task> tasks = new ArrayList<>();
+        File dataFile = new File("data/duke.txt");
+        if (!dataFile.exists()) {
+            return tasks;
+        }
+        try (Scanner fileScanner = new Scanner(dataFile)) {
+            while (fileScanner.hasNextLine()) {
+                tasks.add(createTaskFromFileString(fileScanner.nextLine()));
+            }
+        } catch (IOException e) {
+            throw new ComputahException("I could not load the task list.");
+        }
+        return tasks;
+    }
+
+    /**
+     * Creates a task from one line in the saved task file.
+     */
+    private static Task createTaskFromFileString(String line) throws ComputahException {
+        String[] parts = line.split(" \\| ");
+        Task task;
+        if (parts[0].equals("T")) {
+            task = new ToDo(parts[2]);
+        } else if (parts[0].equals("D")) {
+            task = new Deadline(parts[2], parts[3]);
+        } else if (parts[0].equals("E")) {
+            task = new Event(parts[2], parts[3], parts[4]);
+        } else {
+            throw new ComputahException("I could not load the task list.");
+        }
+        if (parts[1].equals("1")) {
+            task.markAsDone();
+        }
+        return task;
     }
 
     /**

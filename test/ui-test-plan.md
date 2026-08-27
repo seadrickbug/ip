@@ -362,6 +362,57 @@ E | 0 | project meeting | Aug 6th 2pm | 4pm
 T | 0 | join sports club
 ```
 
+## Test Case: Load Tasks From File
+
+Aim: Verify that the chatbot loads tasks from `data/duke.txt` when it starts.
+
+Inputs:
+```text
+list
+bye
+```
+
+Initial file `data/duke.txt`:
+```text
+T | 1 | read book
+D | 0 | return book | June 6th
+E | 0 | project meeting | Aug 6th 2pm | 4pm
+T | 1 | join sports club
+```
+
+Expected output:
+```text
+____________________________________________________________
+  ____                            _        _
+ / ___|___  _ __ ___  _ __  _   _| |_ __ _| |__
+| |   / _ \| '_ ` _ \| '_ \| | | | __/ _` | '_ \
+| |__| (_) | | | | | | |_) | |_| | || (_| | | | |
+ \____\___/|_| |_| |_| .__/ \__,_|\__\__,_|_| |_|
+                     |_|
+
+Hello! I'm Computah.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Here are the tasks in your list:
+1.[T][X] read book
+2.[D][ ] return book (by: June 6th)
+3.[E][ ] project meeting (from: Aug 6th 2pm to: 4pm)
+4.[T][X] join sports club
+____________________________________________________________
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+Expected file `data/duke.txt`:
+```text
+T | 1 | read book
+D | 0 | return book | June 6th
+E | 0 | project meeting | Aug 6th 2pm | 4pm
+T | 1 | join sports club
+```
+
 ## Test Case: Handle Invalid Commands
 
 Aim: Verify that invalid user inputs are handled with chatbot-specific error messages without ending the session.

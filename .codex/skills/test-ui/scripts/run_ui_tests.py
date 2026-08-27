@@ -14,6 +14,7 @@ class TestCase:
     aim: str
     inputs: str
     expected: str
+    initial_files: dict[str, str]
     expected_files: dict[str, str]
 
 
@@ -42,6 +43,9 @@ def parse_plan(plan_path):
         aim_match = re.search(r"^Aim:\s*(.+)$", section, re.MULTILINE)
         if not aim_match:
             raise ValueError(f"Missing aim for test case: {name}")
+        initial_files = {}
+        for file_match in re.finditer(r"Initial file `([^`]+)`:\s*```(?:text)?\n(.*?)\n```", section, re.DOTALL):
+            initial_files[file_match.group(1)] = file_match.group(2)
         expected_files = {}
         for file_match in re.finditer(r"Expected file `([^`]+)`:\s*```(?:text)?\n(.*?)\n```", section, re.DOTALL):
             expected_files[file_match.group(1)] = file_match.group(2)
@@ -51,6 +55,7 @@ def parse_plan(plan_path):
                 aim=aim_match.group(1).strip(),
                 inputs=extract_block(section, "Inputs"),
                 expected=extract_block(section, "Expected output"),
+                initial_files=initial_files,
                 expected_files=expected_files,
             )
         )
@@ -77,6 +82,10 @@ def run_case(project_root, build_dir, main_class, test_case):
     data_file = project_root / "data/duke.txt"
     if data_file.exists():
         data_file.unlink()
+    for file_path, content in test_case.initial_files.items():
+        initial_file_path = project_root / file_path
+        initial_file_path.parent.mkdir(parents=True, exist_ok=True)
+        initial_file_path.write_text(content + ("\n" if content and not content.endswith("\n") else ""))
     input_text = test_case.inputs
     if input_text and not input_text.endswith("\n"):
         input_text += "\n"
@@ -93,6 +102,9 @@ def run_case(project_root, build_dir, main_class, test_case):
 def print_transcript(test_case, actual):
     print(f"=== Test Case: {test_case.name} ===")
     print(f"Aim: {test_case.aim}")
+    for file_path, content in test_case.initial_files.items():
+        print(f"--- Initial file: {file_path} ---")
+        print(content.rstrip())
     print("--- Console input ---")
     print(test_case.inputs)
     print("--- Console output ---")
