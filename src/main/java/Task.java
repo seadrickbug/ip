@@ -18,6 +18,10 @@ public class Task {
         return "";
     }
 
+    public String toFileString() {
+        return getTaskType() + " | " + (isDone ? "1" : "0") + " | " + description;
+    }
+
     public void markAsDone() {
         isDone = true;
     }
