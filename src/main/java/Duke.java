@@ -1,3 +1,6 @@
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -38,6 +41,7 @@ public class Duke {
                 if (input.startsWith("delete")) {
                     int taskIndex = getTaskIndex(input, "delete", tasks.size());
                     Task removedTask = tasks.remove(taskIndex);
+                    saveTasks(tasks);
                     System.out.println("Noted. I've removed this task:");
                     System.out.println("  " + removedTask);
                     System.out.println("Now you have " + tasks.size() + " tasks in the list.");
@@ -47,6 +51,7 @@ public class Duke {
                 if (input.startsWith("unmark")) {
                     int taskIndex = getTaskIndex(input, "unmark", tasks.size());
                     tasks.get(taskIndex).markAsNotDone();
+                    saveTasks(tasks);
                     System.out.println("OK, I've marked this task as not done yet:");
                     System.out.println("  " + tasks.get(taskIndex));
                     System.out.println(line);
@@ -55,6 +60,7 @@ public class Duke {
                 if (input.startsWith("mark")) {
                     int taskIndex = getTaskIndex(input, "mark", tasks.size());
                     tasks.get(taskIndex).markAsDone();
+                    saveTasks(tasks);
                     System.out.println("Nice! I've marked this task as done:");
                     System.out.println("  " + tasks.get(taskIndex));
                     System.out.println(line);
@@ -62,6 +68,7 @@ public class Duke {
                 }
                 Task task = createTask(input);
                 tasks.add(task);
+                saveTasks(tasks);
                 System.out.println("Got it. I've added this task:");
                 System.out.println("  " + task);
                 System.out.println("Now you have " + tasks.size() + " tasks in the list.");
@@ -123,6 +130,24 @@ public class Duke {
             return new Event(fromParts[0].trim(), toParts[0].trim(), toParts[1].trim());
         }
         throw new ComputahException("I'm sorry, but I don't know what that means :-(");
+    }
+
+    /**
+     * Saves the current task list to the hard disk.
+     */
+    private static void saveTasks(ArrayList<Task> tasks) throws ComputahException {
+        File dataFile = new File("data/duke.txt");
+        File dataDirectory = dataFile.getParentFile();
+        if (!dataDirectory.exists() && !dataDirectory.mkdirs()) {
+            throw new ComputahException("I could not create the data directory.");
+        }
+        try (FileWriter writer = new FileWriter(dataFile)) {
+            for (Task task : tasks) {
+                writer.write(task.toFileString() + System.lineSeparator());
+            }
+        } catch (IOException e) {
+            throw new ComputahException("I could not save the task list.");
+        }
     }
 
     /**

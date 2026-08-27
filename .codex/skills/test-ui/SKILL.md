@@ -16,6 +16,9 @@ Each test case must include:
 - console input commands
 - expected program output
 
+Each test case may also include:
+- expected contents of a file after the program exits
+
 Use this format:
 
 ````markdown
@@ -34,6 +37,11 @@ Expected output:
 ```text
 full expected stdout
 ```
+
+Expected file `path/to/file.txt`:
+```text
+full expected file contents
+```
 ````
 
 ## Running Tests
@@ -49,6 +57,7 @@ The runner:
 - runs `java -cp /tmp/cs2103-ip-ui-tests Duke` once per test case
 - sends the listed inputs through standard input
 - compares actual output against expected output after normalizing line endings and trimming trailing whitespace on each line
+- optionally compares files recorded as `Expected file `path/to/file.txt`:`
 - prints a console input/output record for each completed test
 - stops immediately on the first failed test and prints actual versus expected output
 
