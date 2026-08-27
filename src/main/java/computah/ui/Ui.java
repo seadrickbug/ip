@@ -19,10 +19,16 @@ public class Ui {
 
     private final Scanner scanner;
 
+    /**
+     * Creates a UI component that reads from standard input.
+     */
     public Ui() {
         scanner = new Scanner(System.in);
     }
 
+    /**
+     * Shows the greeting banner and initial prompt.
+     */
     public void showWelcome() {
         System.out.println(LINE);
         System.out.println(BANNER);
@@ -31,23 +37,44 @@ public class Ui {
         System.out.println(LINE);
     }
 
+    /**
+     * Returns whether another user command is available.
+     *
+     * @return true if standard input has another line
+     */
     public boolean hasNextCommand() {
         return scanner.hasNextLine();
     }
 
+    /**
+     * Reads and trims the next user command.
+     *
+     * @return trimmed user command
+     */
     public String readCommand() {
         return scanner.nextLine().trim();
     }
 
+    /**
+     * Shows the divider line.
+     */
     public void showLine() {
         System.out.println(LINE);
     }
 
+    /**
+     * Shows the farewell message.
+     */
     public void showFarewell() {
         System.out.println("Bye. Hope to see you again soon!");
         System.out.println(LINE);
     }
 
+    /**
+     * Shows all tasks in the current task list.
+     *
+     * @param tasks tasks to display
+     */
     public void showTaskList(ArrayList<Task> tasks) {
         System.out.println("Here are the tasks in your list:");
         for (int i = 0; i < tasks.size(); i++) {
@@ -56,6 +83,12 @@ public class Ui {
         System.out.println(LINE);
     }
 
+    /**
+     * Shows the confirmation message for an added task.
+     *
+     * @param task task that was added
+     * @param taskCount number of tasks after adding the task
+     */
     public void showTaskAdded(Task task, int taskCount) {
         System.out.println("Got it. I've added this task:");
         System.out.println("  " + task);
@@ -63,6 +96,12 @@ public class Ui {
         System.out.println(LINE);
     }
 
+    /**
+     * Shows the confirmation message for a deleted task.
+     *
+     * @param task task that was deleted
+     * @param taskCount number of tasks after deleting the task
+     */
     public void showTaskDeleted(Task task, int taskCount) {
         System.out.println("Noted. I've removed this task:");
         System.out.println("  " + task);
@@ -70,18 +109,33 @@ public class Ui {
         System.out.println(LINE);
     }
 
+    /**
+     * Shows the confirmation message for a task marked as done.
+     *
+     * @param task task that was marked as done
+     */
     public void showTaskMarked(Task task) {
         System.out.println("Nice! I've marked this task as done:");
         System.out.println("  " + task);
         System.out.println(LINE);
     }
 
+    /**
+     * Shows the confirmation message for a task marked as not done.
+     *
+     * @param task task that was marked as not done
+     */
     public void showTaskUnmarked(Task task) {
         System.out.println("OK, I've marked this task as not done yet:");
         System.out.println("  " + task);
         System.out.println(LINE);
     }
 
+    /**
+     * Shows an error message.
+     *
+     * @param message error message without the standard Computah error prefix
+     */
     public void showError(String message) {
         System.out.println("OOPS!!! " + message);
         System.out.println(LINE);

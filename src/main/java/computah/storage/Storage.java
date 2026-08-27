@@ -20,10 +20,21 @@ import java.util.Scanner;
 public class Storage {
     private final String filePath;
 
+    /**
+     * Creates a storage component that reads from and writes to the given file path.
+     *
+     * @param filePath path to the save file
+     */
     public Storage(String filePath) {
         this.filePath = filePath;
     }
 
+    /**
+     * Saves the given task list to the save file, overwriting previous contents.
+     *
+     * @param tasks tasks to save
+     * @throws ComputahException if the data directory or save file cannot be written
+     */
     public void save(ArrayList<Task> tasks) throws ComputahException {
         File dataFile = new File(filePath);
         File dataDirectory = dataFile.getParentFile();
@@ -39,6 +50,12 @@ public class Storage {
         }
     }
 
+    /**
+     * Loads tasks from the save file.
+     *
+     * @return saved tasks, or an empty list if the save file does not exist
+     * @throws ComputahException if the save file cannot be read or contains malformed task data
+     */
     public ArrayList<Task> load() throws ComputahException {
         ArrayList<Task> tasks = new ArrayList<>();
         File dataFile = new File(filePath);
@@ -55,6 +72,13 @@ public class Storage {
         return tasks;
     }
 
+    /**
+     * Creates a task from one line in the save file.
+     *
+     * @param line save-file line to parse
+     * @return task represented by the line
+     * @throws ComputahException if the line does not match the save-file format
+     */
     private Task createTaskFromFileString(String line) throws ComputahException {
         String[] parts = line.split(" \\| ", -1);
         if (parts.length < 3) {
@@ -81,6 +105,13 @@ public class Storage {
         return task;
     }
 
+    /**
+     * Checks that a saved task line has the exact field count and no empty data fields.
+     *
+     * @param parts fields split from one save-file line
+     * @param expectedLength expected number of fields for the task type
+     * @throws ComputahException if the saved line is malformed
+     */
     private void validateSavedLine(String[] parts, int expectedLength) throws ComputahException {
         if (parts.length != expectedLength || parts[2].isEmpty()) {
             throw new ComputahException("I could not load the task list.");
@@ -92,6 +123,13 @@ public class Storage {
         }
     }
 
+    /**
+     * Parses a saved date/time while converting date parse failures into storage load failures.
+     *
+     * @param text saved date/time text
+     * @return parsed date/time
+     * @throws ComputahException if the saved date/time is invalid
+     */
     private LocalDateTime parseSavedDateTime(String text) throws ComputahException {
         try {
             return DateTimeUtil.parse(text);

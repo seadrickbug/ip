@@ -24,6 +24,19 @@ public class DateTimeUtil {
     private static final DateTimeFormatter SLASH_DATE_TIME_FORMAT =
             DateTimeFormatter.ofPattern("d/M/yyyy HHmm");
 
+    /**
+     * Prevents instantiation of this utility class.
+     */
+    private DateTimeUtil() {
+    }
+
+    /**
+     * Parses supported user date/time formats into a LocalDateTime.
+     *
+     * @param text date/time text to parse
+     * @return parsed date/time, using midnight when the input contains only a date
+     * @throws ComputahException if the text does not match any supported format
+     */
     public static LocalDateTime parse(String text) throws ComputahException {
         String trimmedText = text.trim();
         try {
@@ -49,6 +62,12 @@ public class DateTimeUtil {
         }
     }
 
+    /**
+     * Formats a date/time for display to the user.
+     *
+     * @param dateTime date/time to format
+     * @return date-only text for midnight values, or date-time text otherwise
+     */
     public static String formatForDisplay(LocalDateTime dateTime) {
         if (dateTime.toLocalTime().equals(LocalTime.MIDNIGHT)) {
             return dateTime.format(DISPLAY_DATE_FORMAT);
@@ -56,6 +75,12 @@ public class DateTimeUtil {
         return dateTime.format(DISPLAY_DATE_TIME_FORMAT);
     }
 
+    /**
+     * Formats a date/time for storage in the save file.
+     *
+     * @param dateTime date/time to format
+     * @return ISO date text for midnight values, or ISO date plus 24-hour time otherwise
+     */
     public static String formatForFile(LocalDateTime dateTime) {
         if (dateTime.toLocalTime().equals(LocalTime.MIDNIGHT)) {
             return dateTime.toLocalDate().toString();

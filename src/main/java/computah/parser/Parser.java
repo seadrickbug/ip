@@ -18,6 +18,20 @@ import computah.util.DateTimeUtil;
  * Makes sense of user commands.
  */
 public class Parser {
+    /**
+     * Prevents instantiation of this utility class.
+     */
+    private Parser() {
+    }
+
+    /**
+     * Parses a full user input line into a command object.
+     *
+     * @param input full user input after trimming
+     * @param taskCount number of tasks currently in the list
+     * @return command represented by the user input
+     * @throws ComputahException if the input is empty, unknown, malformed, or refers to an invalid task number
+     */
     public static Command parse(String input, int taskCount) throws ComputahException {
         if (input.isEmpty()) {
             throw new ComputahException("Please enter a command.");
@@ -40,6 +54,13 @@ public class Parser {
         return new AddCommand(createTask(input));
     }
 
+    /**
+     * Creates a task from a task-creation command.
+     *
+     * @param input full user input for a todo, deadline, or event command
+     * @return task represented by the command
+     * @throws ComputahException if the command is malformed or does not create a supported task type
+     */
     private static Task createTask(String input) throws ComputahException {
         if (input.equals("todo")) {
             throw new ComputahException("The description of a todo cannot be empty.");
@@ -97,12 +118,27 @@ public class Parser {
         throw new ComputahException("I'm sorry, but I don't know what that means :-(");
     }
 
+    /**
+     * Checks that a task field can be safely written using the current file delimiter.
+     *
+     * @param field task field to validate
+     * @throws ComputahException if the field contains the save-file delimiter
+     */
     private static void validateFileSafeField(String field) throws ComputahException {
         if (field.contains(" | ")) {
             throw new ComputahException("Task details cannot contain \" | \".");
         }
     }
 
+    /**
+     * Converts a one-based task number in a command into a zero-based list index.
+     *
+     * @param input full user input
+     * @param command command word that should be followed by a task number
+     * @param taskCount number of tasks currently in the list
+     * @return zero-based task index
+     * @throws ComputahException if the command has no valid task number or the number is out of range
+     */
     private static int getTaskIndex(String input, String command, int taskCount) throws ComputahException {
         if (!input.startsWith(command + " ")) {
             throw new ComputahException("Please specify a task number after " + command + ".");

@@ -9,7 +9,21 @@ import computah.ui.Ui;
 
 import java.util.ArrayList;
 
+/**
+ * Entry point and main coordinator for the Computah chatbot.
+ */
 public class Duke {
+    /**
+     * Prevents instantiation of this entry-point class.
+     */
+    private Duke() {
+    }
+
+    /**
+     * Starts Computah, loads saved tasks, and runs the command loop.
+     *
+     * @param args command-line arguments; currently unused
+     */
     public static void main(String[] args) {
         Ui ui = new Ui();
         Storage storage = new Storage("data/duke.txt");
