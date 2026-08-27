@@ -1,9 +1,9 @@
 package computah.ui;
 
-import computah.task.Task;
-
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import computah.task.Task;
 
 /**
  * Handles interactions with the user.
@@ -40,7 +40,7 @@ public class Ui {
     /**
      * Returns whether another user command is available.
      *
-     * @return true if standard input has another line
+     * @return true if standard input has another line.
      */
     public boolean hasNextCommand() {
         return scanner.hasNextLine();
@@ -49,7 +49,7 @@ public class Ui {
     /**
      * Reads and trims the next user command.
      *
-     * @return trimmed user command
+     * @return trimmed user command.
      */
     public String readCommand() {
         return scanner.nextLine().trim();
@@ -73,7 +73,7 @@ public class Ui {
     /**
      * Shows all tasks in the current task list.
      *
-     * @param tasks tasks to display
+     * @param tasks tasks to display.
      */
     public void showTaskList(ArrayList<Task> tasks) {
         System.out.println("Here are the tasks in your list:");
@@ -86,8 +86,8 @@ public class Ui {
     /**
      * Shows the confirmation message for an added task.
      *
-     * @param task task that was added
-     * @param taskCount number of tasks after adding the task
+     * @param task task that was added.
+     * @param taskCount number of tasks after adding the task.
      */
     public void showTaskAdded(Task task, int taskCount) {
         System.out.println("Got it. I've added this task:");
@@ -99,8 +99,8 @@ public class Ui {
     /**
      * Shows the confirmation message for a deleted task.
      *
-     * @param task task that was deleted
-     * @param taskCount number of tasks after deleting the task
+     * @param task task that was deleted.
+     * @param taskCount number of tasks after deleting the task.
      */
     public void showTaskDeleted(Task task, int taskCount) {
         System.out.println("Noted. I've removed this task:");
@@ -112,7 +112,7 @@ public class Ui {
     /**
      * Shows the confirmation message for a task marked as done.
      *
-     * @param task task that was marked as done
+     * @param task task that was marked as done.
      */
     public void showTaskMarked(Task task) {
         System.out.println("Nice! I've marked this task as done:");
@@ -123,7 +123,7 @@ public class Ui {
     /**
      * Shows the confirmation message for a task marked as not done.
      *
-     * @param task task that was marked as not done
+     * @param task task that was marked as not done.
      */
     public void showTaskUnmarked(Task task) {
         System.out.println("OK, I've marked this task as not done yet:");
@@ -134,7 +134,7 @@ public class Ui {
     /**
      * Shows an error message.
      *
-     * @param message error message without the standard Computah error prefix
+     * @param message error message without the standard Computah error prefix.
      */
     public void showError(String message) {
         System.out.println("OOPS!!! " + message);

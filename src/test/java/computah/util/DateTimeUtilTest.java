@@ -3,12 +3,15 @@ package computah.util;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import computah.exception.ComputahException;
-
 import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.Test;
 
+import computah.exception.ComputahException;
+
+/**
+ * Tests date/time parsing and formatting behavior in {@link DateTimeUtil}.
+ */
 public class DateTimeUtilTest {
     @Test
     public void parse_isoDate_returnsStartOfDay() throws ComputahException {

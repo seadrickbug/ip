@@ -1,13 +1,13 @@
 package computah;
 
+import java.util.ArrayList;
+
 import computah.command.Command;
 import computah.exception.ComputahException;
 import computah.parser.Parser;
 import computah.storage.Storage;
 import computah.task.Task;
 import computah.ui.Ui;
-
-import java.util.ArrayList;
 
 /**
  * Entry point and main coordinator for the Computah chatbot.
@@ -22,7 +22,7 @@ public class Duke {
     /**
      * Starts Computah, loads saved tasks, and runs the command loop.
      *
-     * @param args command-line arguments; currently unused
+     * @param args command-line arguments; currently unused.
      */
     public static void main(String[] args) {
         Ui ui = new Ui();

@@ -1,18 +1,18 @@
 package computah.storage;
 
-import computah.exception.ComputahException;
-import computah.task.Deadline;
-import computah.task.Event;
-import computah.task.Task;
-import computah.task.ToDo;
-import computah.util.DateTimeUtil;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import computah.exception.ComputahException;
+import computah.task.Deadline;
+import computah.task.Event;
+import computah.task.Task;
+import computah.task.ToDo;
+import computah.util.DateTimeUtil;
 
 /**
  * Loads tasks from the file and saves tasks to the file.
@@ -23,7 +23,7 @@ public class Storage {
     /**
      * Creates a storage component that reads from and writes to the given file path.
      *
-     * @param filePath path to the save file
+     * @param filePath path to the save file.
      */
     public Storage(String filePath) {
         this.filePath = filePath;
@@ -32,8 +32,8 @@ public class Storage {
     /**
      * Saves the given task list to the save file, overwriting previous contents.
      *
-     * @param tasks tasks to save
-     * @throws ComputahException if the data directory or save file cannot be written
+     * @param tasks tasks to save.
+     * @throws ComputahException if the data directory or save file cannot be written.
      */
     public void save(ArrayList<Task> tasks) throws ComputahException {
         File dataFile = new File(filePath);
@@ -53,8 +53,8 @@ public class Storage {
     /**
      * Loads tasks from the save file.
      *
-     * @return saved tasks, or an empty list if the save file does not exist
-     * @throws ComputahException if the save file cannot be read or contains malformed task data
+     * @return saved tasks, or an empty list if the save file does not exist.
+     * @throws ComputahException if the save file cannot be read or contains malformed task data.
      */
     public ArrayList<Task> load() throws ComputahException {
         ArrayList<Task> tasks = new ArrayList<>();
@@ -75,9 +75,9 @@ public class Storage {
     /**
      * Creates a task from one line in the save file.
      *
-     * @param line save-file line to parse
-     * @return task represented by the line
-     * @throws ComputahException if the line does not match the save-file format
+     * @param line save-file line to parse.
+     * @return task represented by the line.
+     * @throws ComputahException if the line does not match the save-file format.
      */
     private Task createTaskFromFileString(String line) throws ComputahException {
         String[] parts = line.split(" \\| ", -1);
@@ -108,9 +108,9 @@ public class Storage {
     /**
      * Checks that a saved task line has the exact field count and no empty data fields.
      *
-     * @param parts fields split from one save-file line
-     * @param expectedLength expected number of fields for the task type
-     * @throws ComputahException if the saved line is malformed
+     * @param parts fields split from one save-file line.
+     * @param expectedLength expected number of fields for the task type.
+     * @throws ComputahException if the saved line is malformed.
      */
     private void validateSavedLine(String[] parts, int expectedLength) throws ComputahException {
         if (parts.length != expectedLength || parts[2].isEmpty()) {
@@ -126,9 +126,9 @@ public class Storage {
     /**
      * Parses a saved date/time while converting date parse failures into storage load failures.
      *
-     * @param text saved date/time text
-     * @return parsed date/time
-     * @throws ComputahException if the saved date/time is invalid
+     * @param text saved date/time text.
+     * @return parsed date/time.
+     * @throws ComputahException if the saved date/time is invalid.
      */
     private LocalDateTime parseSavedDateTime(String text) throws ComputahException {
         try {

@@ -7,17 +7,17 @@ public class Task {
     /**
      * User-facing task description.
      */
-    protected String description;
+    private String description;
 
     /**
      * Whether this task has been marked as done.
      */
-    protected boolean isDone;
+    private boolean isDone;
 
     /**
      * Creates a task with the given description and a default not-done status.
      *
-     * @param description description of the task
+     * @param description description of the task.
      */
     public Task(String description) {
         this.description = description;
@@ -27,7 +27,7 @@ public class Task {
     /**
      * Returns the status icon used when displaying this task.
      *
-     * @return "X" for done tasks, or a blank space for not-done tasks
+     * @return "X" for done tasks, or a blank space for not-done tasks.
      */
     public String getStatusIcon() {
         return isDone ? "X" : " ";
@@ -36,7 +36,7 @@ public class Task {
     /**
      * Returns the single-letter task type icon.
      *
-     * @return task type icon
+     * @return task type icon.
      */
     public String getTaskType() {
         return "";
@@ -45,7 +45,7 @@ public class Task {
     /**
      * Converts this task into one line for the save file.
      *
-     * @return save-file representation of this task
+     * @return save-file representation of this task.
      */
     public String toFileString() {
         return getTaskType() + " | " + (isDone ? "1" : "0") + " | " + description;
@@ -68,7 +68,7 @@ public class Task {
     /**
      * Returns the display representation of this task.
      *
-     * @return task type, status, and description formatted for display
+     * @return task type, status, and description formatted for display.
      */
     @Override
     public String toString() {
