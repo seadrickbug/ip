@@ -1,10 +1,12 @@
+import java.time.LocalDateTime;
+
 /**
  * Represents a task that needs to be done before a specific date or time.
  */
 public class Deadline extends Task {
-    protected String by;
+    protected LocalDateTime by;
 
-    public Deadline(String description, String by) {
+    public Deadline(String description, LocalDateTime by) {
         super(description);
         this.by = by;
     }
@@ -16,11 +18,11 @@ public class Deadline extends Task {
 
     @Override
     public String toFileString() {
-        return super.toFileString() + " | " + by;
+        return super.toFileString() + " | " + DateTimeUtil.formatForFile(by);
     }
 
     @Override
     public String toString() {
-        return super.toString() + " (by: " + by + ")";
+        return super.toString() + " (by: " + DateTimeUtil.formatForDisplay(by) + ")";
     }
 }
