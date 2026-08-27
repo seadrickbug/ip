@@ -59,8 +59,8 @@ python3 .codex/skills/test-ui/scripts/run_ui_tests.py --plan test/ui-test-plan.m
 ```
 
 The runner:
-- compiles all `src/main/java/*.java` files into `/tmp/cs2103-ip-ui-tests`
-- runs `java -cp /tmp/cs2103-ip-ui-tests Duke` once per test case
+- compiles all `src/main/java/**/*.java` files into `/tmp/cs2103-ip-ui-tests`
+- runs `java -cp /tmp/cs2103-ip-ui-tests computah.Duke` once per test case
 - optionally creates files recorded as `Initial file `path/to/file.txt`:`
 - sends the listed inputs through standard input
 - compares actual output against expected output after normalizing line endings and trimming trailing whitespace on each line
