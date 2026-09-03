@@ -1,5 +1,7 @@
 package computah.ui;
 
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -18,23 +20,35 @@ public class Ui {
             + "                     |_|                          \n";
 
     private final Scanner scanner;
+    private final PrintStream output;
 
     /**
      * Creates a UI component that reads from standard input.
      */
     public Ui() {
-        scanner = new Scanner(System.in);
+        this(System.in, System.out);
+    }
+
+    /**
+     * Creates a UI component that reads from the given input stream and writes to the given output stream.
+     *
+     * @param input input stream to read commands from.
+     * @param output output stream to write messages to.
+     */
+    public Ui(InputStream input, PrintStream output) {
+        scanner = new Scanner(input);
+        this.output = output;
     }
 
     /**
      * Shows the greeting banner and initial prompt.
      */
     public void showWelcome() {
-        System.out.println(LINE);
-        System.out.println(BANNER);
-        System.out.println("Hello! I'm Computah.");
-        System.out.println("What can I do for you?");
-        System.out.println(LINE);
+        output.println(LINE);
+        output.println(BANNER);
+        output.println("Hello! I'm Computah.");
+        output.println("What can I do for you?");
+        output.println(LINE);
     }
 
     /**
@@ -59,15 +73,15 @@ public class Ui {
      * Shows the divider line.
      */
     public void showLine() {
-        System.out.println(LINE);
+        output.println(LINE);
     }
 
     /**
      * Shows the farewell message.
      */
     public void showFarewell() {
-        System.out.println("Bye. Hope to see you again soon!");
-        System.out.println(LINE);
+        output.println("Bye. Hope to see you again soon!");
+        output.println(LINE);
     }
 
     /**
@@ -76,11 +90,11 @@ public class Ui {
      * @param tasks tasks to display.
      */
     public void showTaskList(ArrayList<Task> tasks) {
-        System.out.println("Here are the tasks in your list:");
+        output.println("Here are the tasks in your list:");
         for (int i = 0; i < tasks.size(); i++) {
-            System.out.println((i + 1) + "." + tasks.get(i));
+            output.println((i + 1) + "." + tasks.get(i));
         }
-        System.out.println(LINE);
+        output.println(LINE);
     }
 
     /**
@@ -89,11 +103,11 @@ public class Ui {
      * @param tasks matching tasks to display.
      */
     public void showMatchingTasks(ArrayList<Task> tasks) {
-        System.out.println("Here are the matching tasks in your list:");
+        output.println("Here are the matching tasks in your list:");
         for (int i = 0; i < tasks.size(); i++) {
-            System.out.println((i + 1) + "." + tasks.get(i));
+            output.println((i + 1) + "." + tasks.get(i));
         }
-        System.out.println(LINE);
+        output.println(LINE);
     }
 
     /**
@@ -103,10 +117,10 @@ public class Ui {
      * @param taskCount number of tasks after adding the task.
      */
     public void showTaskAdded(Task task, int taskCount) {
-        System.out.println("Got it. I've added this task:");
-        System.out.println("  " + task);
-        System.out.println("Now you have " + taskCount + " tasks in the list.");
-        System.out.println(LINE);
+        output.println("Got it. I've added this task:");
+        output.println("  " + task);
+        output.println("Now you have " + taskCount + " tasks in the list.");
+        output.println(LINE);
     }
 
     /**
@@ -116,10 +130,10 @@ public class Ui {
      * @param taskCount number of tasks after deleting the task.
      */
     public void showTaskDeleted(Task task, int taskCount) {
-        System.out.println("Noted. I've removed this task:");
-        System.out.println("  " + task);
-        System.out.println("Now you have " + taskCount + " tasks in the list.");
-        System.out.println(LINE);
+        output.println("Noted. I've removed this task:");
+        output.println("  " + task);
+        output.println("Now you have " + taskCount + " tasks in the list.");
+        output.println(LINE);
     }
 
     /**
@@ -128,9 +142,9 @@ public class Ui {
      * @param task task that was marked as done.
      */
     public void showTaskMarked(Task task) {
-        System.out.println("Nice! I've marked this task as done:");
-        System.out.println("  " + task);
-        System.out.println(LINE);
+        output.println("Nice! I've marked this task as done:");
+        output.println("  " + task);
+        output.println(LINE);
     }
 
     /**
@@ -139,9 +153,9 @@ public class Ui {
      * @param task task that was marked as not done.
      */
     public void showTaskUnmarked(Task task) {
-        System.out.println("OK, I've marked this task as not done yet:");
-        System.out.println("  " + task);
-        System.out.println(LINE);
+        output.println("OK, I've marked this task as not done yet:");
+        output.println("  " + task);
+        output.println(LINE);
     }
 
     /**
@@ -150,7 +164,7 @@ public class Ui {
      * @param message error message without the standard Computah error prefix.
      */
     public void showError(String message) {
-        System.out.println("OOPS!!! " + message);
-        System.out.println(LINE);
+        output.println("OOPS!!! " + message);
+        output.println(LINE);
     }
 }
