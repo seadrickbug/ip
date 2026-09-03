@@ -56,7 +56,7 @@ checkstyle {
 }
 
 application {
-    mainClass = 'computah.Duke'
+    mainClass = 'computah.Launcher'
 }
 
 jar {
