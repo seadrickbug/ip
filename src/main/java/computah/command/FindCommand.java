@@ -1,6 +1,7 @@
 package computah.command;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import computah.storage.Storage;
 import computah.task.Task;
@@ -30,12 +31,9 @@ public class FindCommand extends Command {
      */
     @Override
     public void execute(ArrayList<Task> tasks, Ui ui, Storage storage) {
-        ArrayList<Task> matchingTasks = new ArrayList<>();
-        for (Task task : tasks) {
-            if (task.hasDescriptionContaining(keyword)) {
-                matchingTasks.add(task);
-            }
-        }
+        ArrayList<Task> matchingTasks = tasks.stream()
+                .filter(task -> task.hasDescriptionContaining(keyword))
+                .collect(Collectors.toCollection(ArrayList::new));
         ui.showMatchingTasks(matchingTasks);
     }
 }
