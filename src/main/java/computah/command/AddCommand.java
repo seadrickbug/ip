@@ -32,7 +32,9 @@ public class AddCommand extends Command {
      */
     @Override
     public void execute(ArrayList<Task> tasks, Ui ui, Storage storage) throws ComputahException {
+        int previousTaskCount = tasks.size();
         tasks.add(task);
+        assert tasks.size() == previousTaskCount + 1 : "Adding a task should increase the task count by one";
         storage.save(tasks);
         ui.showTaskAdded(task, tasks.size());
     }
