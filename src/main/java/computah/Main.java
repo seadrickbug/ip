@@ -4,13 +4,12 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 
 import computah.command.Command;
 import computah.exception.ComputahException;
+import computah.model.Model;
 import computah.parser.Parser;
 import computah.storage.Storage;
-import computah.task.Task;
 import computah.ui.Ui;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -26,8 +25,8 @@ import javafx.stage.Stage;
  * Shows the JavaFX graphical interface for Computah.
  */
 public class Main extends Application {
-    private final Storage storage = new Storage("data/duke.txt");
-    private final ArrayList<Task> tasks = new ArrayList<>();
+    private final Storage storage = new Storage("data/duke.txt", "data/clients.txt");
+    private final Model model = new Model();
 
     private TextArea dialogBox;
     private TextField commandBox;
@@ -60,7 +59,7 @@ public class Main extends Application {
         root.setCenter(dialogBox);
         root.setBottom(inputArea);
 
-        loadTasks();
+        loadData();
         appendWithDivider("Hello! I'm Computah.\nWhat can I do for you?");
 
         stage.setTitle("Computah");
@@ -68,9 +67,14 @@ public class Main extends Application {
         stage.show();
     }
 
-    private void loadTasks() {
+    private void loadData() {
         try {
-            tasks.addAll(storage.load());
+            model.getTasks().addAll(storage.loadTasks());
+        } catch (ComputahException e) {
+            appendWithDivider("OOPS!!! " + e.getMessage());
+        }
+        try {
+            model.getClients().addAll(storage.loadClients());
         } catch (ComputahException e) {
             appendWithDivider("OOPS!!! " + e.getMessage());
         }
@@ -86,7 +90,7 @@ public class Main extends Application {
         appendCommand(input);
 
         try {
-            Command command = Parser.parse(input, tasks.size());
+            Command command = Parser.parse(input, model.getTaskCount(), model.getClientCount());
             String response = executeCommand(command);
             appendResponse(response);
             if (command.isExit()) {
@@ -103,7 +107,7 @@ public class Main extends Application {
         PrintStream output = new PrintStream(response, true, StandardCharsets.UTF_8);
         Ui ui = new Ui(new ByteArrayInputStream(new byte[0]), output);
 
-        command.execute(tasks, ui, storage);
+        command.execute(model, ui, storage);
         output.flush();
         return response.toString(StandardCharsets.UTF_8).stripTrailing();
     }

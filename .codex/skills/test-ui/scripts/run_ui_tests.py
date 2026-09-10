@@ -79,9 +79,10 @@ def compile_sources(project_root, build_dir):
 
 
 def run_case(project_root, build_dir, main_class, test_case):
-    data_file = project_root / "data/duke.txt"
-    if data_file.exists():
-        data_file.unlink()
+    for data_file_name in ("duke.txt", "clients.txt"):
+        data_file = project_root / "data" / data_file_name
+        if data_file.exists():
+            data_file.unlink()
     for file_path, content in test_case.initial_files.items():
         initial_file_path = project_root / file_path
         initial_file_path.parent.mkdir(parents=True, exist_ok=True)
