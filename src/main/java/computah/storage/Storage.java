@@ -18,6 +18,24 @@ import computah.util.DateTimeUtil;
  * Loads tasks from the file and saves tasks to the file.
  */
 public class Storage {
+    private static final String FIELD_SEPARATOR = " \\| ";
+    private static final String TODO_TYPE = "T";
+    private static final String DEADLINE_TYPE = "D";
+    private static final String EVENT_TYPE = "E";
+    private static final String DONE_STATUS = "1";
+    private static final String NOT_DONE_STATUS = "0";
+    private static final String LOAD_ERROR_MESSAGE = "I could not load the task list.";
+
+    private static final int PRESERVE_TRAILING_EMPTY_FIELDS = -1;
+    private static final int TASK_TYPE_INDEX = 0;
+    private static final int STATUS_INDEX = 1;
+    private static final int DESCRIPTION_INDEX = 2;
+    private static final int FIRST_DETAIL_INDEX = 3;
+    private static final int MINIMUM_FIELD_COUNT = 3;
+    private static final int TODO_FIELD_COUNT = 3;
+    private static final int DEADLINE_FIELD_COUNT = 4;
+    private static final int EVENT_FIELD_COUNT = 5;
+
     private final String filePath;
 
     /**
@@ -67,7 +85,7 @@ public class Storage {
                 tasks.add(createTaskFromFileString(fileScanner.nextLine()));
             }
         } catch (IOException e) {
-            throw new ComputahException("I could not load the task list.");
+            throw new ComputahException(LOAD_ERROR_MESSAGE);
         }
         return tasks;
     }
@@ -80,27 +98,28 @@ public class Storage {
      * @throws ComputahException if the line does not match the save-file format.
      */
     private Task createTaskFromFileString(String line) throws ComputahException {
-        String[] parts = line.split(" \\| ", -1);
-        if (parts.length < 3) {
-            throw new ComputahException("I could not load the task list.");
+        String[] parts = line.split(FIELD_SEPARATOR, PRESERVE_TRAILING_EMPTY_FIELDS);
+        if (parts.length < MINIMUM_FIELD_COUNT) {
+            throw new ComputahException(LOAD_ERROR_MESSAGE);
         }
         Task task;
-        if (parts[0].equals("T")) {
-            validateSavedLine(parts, 3);
-            task = new ToDo(parts[2]);
-        } else if (parts[0].equals("D")) {
-            validateSavedLine(parts, 4);
-            task = new Deadline(parts[2], parseSavedDateTime(parts[3]));
-        } else if (parts[0].equals("E")) {
-            validateSavedLine(parts, 5);
-            task = new Event(parts[2], parseSavedDateTime(parts[3]), parseSavedDateTime(parts[4]));
+        if (parts[TASK_TYPE_INDEX].equals(TODO_TYPE)) {
+            validateSavedLine(parts, TODO_FIELD_COUNT);
+            task = new ToDo(parts[DESCRIPTION_INDEX]);
+        } else if (parts[TASK_TYPE_INDEX].equals(DEADLINE_TYPE)) {
+            validateSavedLine(parts, DEADLINE_FIELD_COUNT);
+            task = new Deadline(parts[DESCRIPTION_INDEX], parseSavedDateTime(parts[FIRST_DETAIL_INDEX]));
+        } else if (parts[TASK_TYPE_INDEX].equals(EVENT_TYPE)) {
+            validateSavedLine(parts, EVENT_FIELD_COUNT);
+            task = new Event(parts[DESCRIPTION_INDEX], parseSavedDateTime(parts[FIRST_DETAIL_INDEX]),
+                    parseSavedDateTime(parts[FIRST_DETAIL_INDEX + 1]));
         } else {
-            throw new ComputahException("I could not load the task list.");
+            throw new ComputahException(LOAD_ERROR_MESSAGE);
         }
-        if (parts[1].equals("1")) {
+        if (parts[STATUS_INDEX].equals(DONE_STATUS)) {
             task.markAsDone();
-        } else if (!parts[1].equals("0")) {
-            throw new ComputahException("I could not load the task list.");
+        } else if (!parts[STATUS_INDEX].equals(NOT_DONE_STATUS)) {
+            throw new ComputahException(LOAD_ERROR_MESSAGE);
         }
         return task;
     }
@@ -113,12 +132,12 @@ public class Storage {
      * @throws ComputahException if the saved line is malformed.
      */
     private void validateSavedLine(String[] parts, int expectedLength) throws ComputahException {
-        if (parts.length != expectedLength || parts[2].isEmpty()) {
-            throw new ComputahException("I could not load the task list.");
+        if (parts.length != expectedLength || parts[DESCRIPTION_INDEX].isEmpty()) {
+            throw new ComputahException(LOAD_ERROR_MESSAGE);
         }
-        for (int i = 3; i < parts.length; i++) {
+        for (int i = FIRST_DETAIL_INDEX; i < parts.length; i++) {
             if (parts[i].isEmpty()) {
-                throw new ComputahException("I could not load the task list.");
+                throw new ComputahException(LOAD_ERROR_MESSAGE);
             }
         }
     }
@@ -134,7 +153,7 @@ public class Storage {
         try {
             return DateTimeUtil.parse(text);
         } catch (ComputahException e) {
-            throw new ComputahException("I could not load the task list.");
+            throw new ComputahException(LOAD_ERROR_MESSAGE);
         }
     }
 }

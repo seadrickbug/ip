@@ -77,56 +77,93 @@ public class Parser {
             throw new ComputahException("The description of a todo cannot be empty.");
         }
         if (input.startsWith("todo ")) {
-            String description = input.substring(5).trim();
-            if (description.isEmpty()) {
-                throw new ComputahException("The description of a todo cannot be empty.");
-            }
-            validateFileSafeField(description);
-            return new ToDo(description);
+            return createToDo(input);
         }
         if (input.equals("deadline")) {
             throw new ComputahException("The description of a deadline cannot be empty.");
         }
         if (input.startsWith("deadline ")) {
-            String details = input.substring(9).trim();
-            String[] parts = details.split(" /by ", 2);
-            if (parts[0].trim().isEmpty()) {
-                throw new ComputahException("The description of a deadline cannot be empty.");
-            }
-            if (parts.length < 2 || parts[1].trim().isEmpty()) {
-                throw new ComputahException("The by date/time of a deadline cannot be empty.");
-            }
-            String description = parts[0].trim();
-            String by = parts[1].trim();
-            validateFileSafeField(description);
-            return new Deadline(description, DateTimeUtil.parse(by));
+            return createDeadline(input);
         }
         if (input.equals("event")) {
             throw new ComputahException("The description of an event cannot be empty.");
         }
         if (input.startsWith("event ")) {
-            String details = input.substring(6).trim();
-            String[] fromParts = details.split(" /from ", 2);
-            if (fromParts[0].trim().isEmpty()) {
-                throw new ComputahException("The description of an event cannot be empty.");
-            }
-            if (fromParts.length < 2) {
-                throw new ComputahException("The start date/time of an event cannot be empty.");
-            }
-            String[] toParts = fromParts[1].split(" /to ", 2);
-            if (toParts[0].trim().isEmpty()) {
-                throw new ComputahException("The start date/time of an event cannot be empty.");
-            }
-            if (toParts.length < 2 || toParts[1].trim().isEmpty()) {
-                throw new ComputahException("The end date/time of an event cannot be empty.");
-            }
-            String description = fromParts[0].trim();
-            String from = toParts[0].trim();
-            String to = toParts[1].trim();
-            validateFileSafeField(description);
-            return new Event(description, DateTimeUtil.parse(from), DateTimeUtil.parse(to));
+            return createEvent(input);
         }
         throw new ComputahException("I'm sorry, but I don't know what that means :-(");
+    }
+
+    /**
+     * Creates a todo from a command containing its description.
+     *
+     * @param input full todo command.
+     * @return todo represented by the command.
+     * @throws ComputahException if the description is empty or unsafe to store.
+     */
+    private static ToDo createToDo(String input) throws ComputahException {
+        String description = input.substring(5).trim();
+        if (description.isEmpty()) {
+            throw new ComputahException("The description of a todo cannot be empty.");
+        }
+        validateFileSafeField(description);
+        return new ToDo(description);
+    }
+
+    /**
+     * Creates a deadline from a command containing its description and due date/time.
+     *
+     * @param input full deadline command.
+     * @return deadline represented by the command.
+     * @throws ComputahException if a required field is missing, invalid, or unsafe to store.
+     */
+    private static Deadline createDeadline(String input) throws ComputahException {
+        String details = input.substring(9).trim();
+        String[] parts = details.split(" /by ", 2);
+        if (parts[0].trim().isEmpty()) {
+            throw new ComputahException("The description of a deadline cannot be empty.");
+        }
+        if (parts.length < 2 || parts[1].trim().isEmpty()) {
+            throw new ComputahException("The by date/time of a deadline cannot be empty.");
+        }
+
+        String description = parts[0].trim();
+        String deadlineText = parts[1].trim();
+        validateFileSafeField(description);
+        return new Deadline(description, DateTimeUtil.parse(deadlineText));
+    }
+
+    /**
+     * Creates an event from a command containing its description, start, and end.
+     *
+     * @param input full event command.
+     * @return event represented by the command.
+     * @throws ComputahException if a required field is missing, invalid, or unsafe to store.
+     */
+    private static Event createEvent(String input) throws ComputahException {
+        String details = input.substring(6).trim();
+        String[] fromParts = details.split(" /from ", 2);
+        if (fromParts[0].trim().isEmpty()) {
+            throw new ComputahException("The description of an event cannot be empty.");
+        }
+        if (fromParts.length < 2) {
+            throw new ComputahException("The start date/time of an event cannot be empty.");
+        }
+
+        String[] toParts = fromParts[1].split(" /to ", 2);
+        if (toParts[0].trim().isEmpty()) {
+            throw new ComputahException("The start date/time of an event cannot be empty.");
+        }
+        if (toParts.length < 2 || toParts[1].trim().isEmpty()) {
+            throw new ComputahException("The end date/time of an event cannot be empty.");
+        }
+
+        String description = fromParts[0].trim();
+        String startDateTimeText = toParts[0].trim();
+        String endDateTimeText = toParts[1].trim();
+        validateFileSafeField(description);
+        return new Event(description, DateTimeUtil.parse(startDateTimeText),
+                DateTimeUtil.parse(endDateTimeText));
     }
 
     /**
