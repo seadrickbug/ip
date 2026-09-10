@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import computah.client.Client;
 import computah.exception.ComputahException;
 import computah.task.Deadline;
 import computah.task.Event;
@@ -15,16 +16,18 @@ import computah.task.ToDo;
 import computah.util.DateTimeUtil;
 
 /**
- * Loads tasks from the file and saves tasks to the file.
+ * Loads and saves task and client data in separate files.
  */
 public class Storage {
     private static final String FIELD_SEPARATOR = " \\| ";
     private static final String TODO_TYPE = "T";
     private static final String DEADLINE_TYPE = "D";
     private static final String EVENT_TYPE = "E";
+    private static final String CLIENT_TYPE = "C";
     private static final String DONE_STATUS = "1";
     private static final String NOT_DONE_STATUS = "0";
     private static final String LOAD_ERROR_MESSAGE = "I could not load the task list.";
+    private static final String CLIENT_LOAD_ERROR_MESSAGE = "I could not load the client list.";
 
     private static final int PRESERVE_TRAILING_EMPTY_FIELDS = -1;
     private static final int TASK_TYPE_INDEX = 0;
@@ -35,16 +38,23 @@ public class Storage {
     private static final int TODO_FIELD_COUNT = 3;
     private static final int DEADLINE_FIELD_COUNT = 4;
     private static final int EVENT_FIELD_COUNT = 5;
+    private static final int CLIENT_FIELD_COUNT = 4;
+    private static final int CLIENT_NAME_INDEX = 1;
+    private static final int CLIENT_PHONE_INDEX = 2;
+    private static final int CLIENT_EMAIL_INDEX = 3;
 
-    private final String filePath;
+    private final String taskFilePath;
+    private final String clientFilePath;
 
     /**
-     * Creates a storage component that reads from and writes to the given file path.
+     * Creates a storage component for the given task and client files.
      *
-     * @param filePath path to the save file.
+     * @param taskFilePath path to the task save file.
+     * @param clientFilePath path to the client save file.
      */
-    public Storage(String filePath) {
-        this.filePath = filePath;
+    public Storage(String taskFilePath, String clientFilePath) {
+        this.taskFilePath = taskFilePath;
+        this.clientFilePath = clientFilePath;
     }
 
     /**
@@ -53,8 +63,8 @@ public class Storage {
      * @param tasks tasks to save.
      * @throws ComputahException if the data directory or save file cannot be written.
      */
-    public void save(ArrayList<Task> tasks) throws ComputahException {
-        File dataFile = new File(filePath);
+    public void saveTasks(ArrayList<Task> tasks) throws ComputahException {
+        File dataFile = new File(taskFilePath);
         File dataDirectory = dataFile.getParentFile();
         if (!dataDirectory.exists() && !dataDirectory.mkdirs()) {
             throw new ComputahException("I could not create the data directory.");
@@ -74,9 +84,9 @@ public class Storage {
      * @return saved tasks, or an empty list if the save file does not exist.
      * @throws ComputahException if the save file cannot be read or contains malformed task data.
      */
-    public ArrayList<Task> load() throws ComputahException {
+    public ArrayList<Task> loadTasks() throws ComputahException {
         ArrayList<Task> tasks = new ArrayList<>();
-        File dataFile = new File(filePath);
+        File dataFile = new File(taskFilePath);
         if (!dataFile.exists()) {
             return tasks;
         }
@@ -88,6 +98,68 @@ public class Storage {
             throw new ComputahException(LOAD_ERROR_MESSAGE);
         }
         return tasks;
+    }
+
+    /**
+     * Saves the given client list to the client save file.
+     *
+     * @param clients clients to save.
+     * @throws ComputahException if the data directory or client file cannot be written.
+     */
+    public void saveClients(ArrayList<Client> clients) throws ComputahException {
+        File dataFile = new File(clientFilePath);
+        File dataDirectory = dataFile.getParentFile();
+        if (!dataDirectory.exists() && !dataDirectory.mkdirs()) {
+            throw new ComputahException("I could not create the data directory.");
+        }
+        try (FileWriter writer = new FileWriter(dataFile)) {
+            for (Client client : clients) {
+                writer.write(client.toFileString() + System.lineSeparator());
+            }
+        } catch (IOException e) {
+            throw new ComputahException("I could not save the client list.");
+        }
+    }
+
+    /**
+     * Loads clients from the client save file.
+     *
+     * @return saved clients, or an empty list if the client file does not exist.
+     * @throws ComputahException if the client file cannot be read or contains malformed data.
+     */
+    public ArrayList<Client> loadClients() throws ComputahException {
+        ArrayList<Client> clients = new ArrayList<>();
+        File dataFile = new File(clientFilePath);
+        if (!dataFile.exists()) {
+            return clients;
+        }
+        try (Scanner fileScanner = new Scanner(dataFile)) {
+            while (fileScanner.hasNextLine()) {
+                clients.add(createClientFromFileString(fileScanner.nextLine()));
+            }
+        } catch (IOException e) {
+            throw new ComputahException(CLIENT_LOAD_ERROR_MESSAGE);
+        }
+        return clients;
+    }
+
+    /**
+     * Creates a client from one line in the client save file.
+     *
+     * @param line save-file line to parse.
+     * @return client represented by the line.
+     * @throws ComputahException if the line does not match the client save-file format.
+     */
+    private Client createClientFromFileString(String line) throws ComputahException {
+        String[] parts = line.split(FIELD_SEPARATOR, PRESERVE_TRAILING_EMPTY_FIELDS);
+        if (parts.length != CLIENT_FIELD_COUNT || !parts[TASK_TYPE_INDEX].equals(CLIENT_TYPE)) {
+            throw new ComputahException(CLIENT_LOAD_ERROR_MESSAGE);
+        }
+        try {
+            return new Client(parts[CLIENT_NAME_INDEX], parts[CLIENT_PHONE_INDEX], parts[CLIENT_EMAIL_INDEX]);
+        } catch (ComputahException e) {
+            throw new ComputahException(CLIENT_LOAD_ERROR_MESSAGE);
+        }
     }
 
     /**

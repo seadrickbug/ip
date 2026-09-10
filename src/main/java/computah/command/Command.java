@@ -1,10 +1,8 @@
 package computah.command;
 
-import java.util.ArrayList;
-
 import computah.exception.ComputahException;
+import computah.model.Model;
 import computah.storage.Storage;
-import computah.task.Task;
 import computah.ui.Ui;
 
 /**
@@ -18,14 +16,14 @@ public abstract class Command {
     }
 
     /**
-     * Executes this command against the current task list and supporting components.
+     * Executes this command against the current application data and supporting components.
      *
-     * @param tasks current task list.
+     * @param model current application data.
      * @param ui user interface used to display command results.
-     * @param storage storage used to persist task-list changes.
+     * @param storage storage used to persist application data.
      * @throws ComputahException if the command cannot be completed.
      */
-    public abstract void execute(ArrayList<Task> tasks, Ui ui, Storage storage) throws ComputahException;
+    public abstract void execute(Model model, Ui ui, Storage storage) throws ComputahException;
 
     /**
      * Returns whether this command should end the command loop.

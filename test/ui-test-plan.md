@@ -631,3 +631,202 @@ Expected file `data/duke.txt`:
 ```text
 T | 0 | valid task
 ```
+
+## Test Case: Manage Clients
+
+Aim: Verify that clients can be added, listed, edited, cleared, and deleted.
+
+Inputs:
+```text
+client add Alice Tan /phone +65 9123 4567 /email alice@example.com
+client add Bob Lee /email bob@example.com
+client list
+client edit 1 /name Alice Lim /phone -
+client list
+client delete 2
+client list
+bye
+```
+
+Expected output:
+```text
+____________________________________________________________
+  ____                            _        _
+ / ___|___  _ __ ___  _ __  _   _| |_ __ _| |__
+| |   / _ \| '_ ` _ \| '_ \| | | | __/ _` | '_ \
+| |__| (_) | | | | | | |_) | |_| | || (_| | | | |
+ \____\___/|_| |_| |_| .__/ \__,_|\__\__,_|_| |_|
+                     |_|
+
+Hello! I'm Computah.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this client:
+  Alice Tan [phone: +65 9123 4567] [email: alice@example.com]
+Now you have 1 client in the list.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this client:
+  Bob Lee [phone: -] [email: bob@example.com]
+Now you have 2 clients in the list.
+____________________________________________________________
+____________________________________________________________
+Here are the clients in your list:
+1.Alice Tan [phone: +65 9123 4567] [email: alice@example.com]
+2.Bob Lee [phone: -] [email: bob@example.com]
+____________________________________________________________
+____________________________________________________________
+Got it. I've updated this client:
+  Alice Lim [phone: -] [email: alice@example.com]
+____________________________________________________________
+____________________________________________________________
+Here are the clients in your list:
+1.Alice Lim [phone: -] [email: alice@example.com]
+2.Bob Lee [phone: -] [email: bob@example.com]
+____________________________________________________________
+____________________________________________________________
+Noted. I've removed this client:
+  Bob Lee [phone: -] [email: bob@example.com]
+Now you have 1 client in the list.
+____________________________________________________________
+____________________________________________________________
+Here are the clients in your list:
+1.Alice Lim [phone: -] [email: alice@example.com]
+____________________________________________________________
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+Expected file `data/clients.txt`:
+```text
+C | Alice Lim |  | alice@example.com
+```
+
+## Test Case: Load Clients From File
+
+Aim: Verify that saved clients load independently from the task file.
+
+Initial file `data/clients.txt`:
+```text
+C | Alice Tan | +65 9123 4567 | alice@example.com
+C | Bob Lee |  | bob@example.com
+```
+
+Inputs:
+```text
+client list
+bye
+```
+
+Expected output:
+```text
+____________________________________________________________
+  ____                            _        _
+ / ___|___  _ __ ___  _ __  _   _| |_ __ _| |__
+| |   / _ \| '_ ` _ \| '_ \| | | | __/ _` | '_ \
+| |__| (_) | | | | | | |_) | |_| | || (_| | | | |
+ \____\___/|_| |_| |_| .__/ \__,_|\__\__,_|_| |_|
+                     |_|
+
+Hello! I'm Computah.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Here are the clients in your list:
+1.Alice Tan [phone: +65 9123 4567] [email: alice@example.com]
+2.Bob Lee [phone: -] [email: bob@example.com]
+____________________________________________________________
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+Expected file `data/clients.txt`:
+```text
+C | Alice Tan | +65 9123 4567 | alice@example.com
+C | Bob Lee |  | bob@example.com
+```
+
+## Test Case: Handle Invalid Client Commands
+
+Aim: Verify that malformed client commands report specific errors without ending the session.
+
+Inputs:
+```text
+client
+client add
+client add Alice /phone
+client add Alice | Tan
+client list extra
+client add Alice
+client edit 1
+client edit 1 /fax 123
+client edit 1 /phone 123 /phone 456
+client edit 1 /name -
+client delete abc
+client delete 2
+bye
+```
+
+Expected output:
+```text
+____________________________________________________________
+  ____                            _        _
+ / ___|___  _ __ ___  _ __  _   _| |_ __ _| |__
+| |   / _ \| '_ ` _ \| '_ \| | | | __/ _` | '_ \
+| |__| (_) | | | | | | |_) | |_| | || (_| | | | |
+ \____\___/|_| |_| |_| .__/ \__,_|\__\__,_|_| |_|
+                     |_|
+
+Hello! I'm Computah.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+OOPS!!! Please specify a client command.
+____________________________________________________________
+____________________________________________________________
+OOPS!!! The name of a client cannot be empty.
+____________________________________________________________
+____________________________________________________________
+OOPS!!! The phone of a client cannot be empty.
+____________________________________________________________
+____________________________________________________________
+OOPS!!! Client details cannot contain " | ".
+____________________________________________________________
+____________________________________________________________
+OOPS!!! The client list command does not accept additional arguments.
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this client:
+  Alice [phone: -] [email: -]
+Now you have 1 client in the list.
+____________________________________________________________
+____________________________________________________________
+OOPS!!! Please specify at least one client field to edit.
+____________________________________________________________
+____________________________________________________________
+OOPS!!! Unknown client field: /fax.
+____________________________________________________________
+____________________________________________________________
+OOPS!!! Client field /phone cannot be specified more than once.
+____________________________________________________________
+____________________________________________________________
+OOPS!!! The name of a client cannot be empty.
+____________________________________________________________
+____________________________________________________________
+OOPS!!! The client number must be a valid number.
+____________________________________________________________
+____________________________________________________________
+OOPS!!! The client number is not in the list.
+____________________________________________________________
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+Expected file `data/clients.txt`:
+```text
+C | Alice |  |
+```

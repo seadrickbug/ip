@@ -5,6 +5,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import computah.client.Client;
 import computah.task.Task;
 
 /**
@@ -114,6 +115,67 @@ public class Ui {
             output.println((i + 1) + "." + tasks.get(i));
         }
         output.println(LINE);
+    }
+
+    /**
+     * Shows all clients in the current client list.
+     *
+     * @param clients clients to display.
+     */
+    public void showClientList(ArrayList<Client> clients) {
+        output.println("Here are the clients in your list:");
+        for (int i = 0; i < clients.size(); i++) {
+            output.println((i + 1) + "." + clients.get(i));
+        }
+        output.println(LINE);
+    }
+
+    /**
+     * Shows the confirmation message for an added client.
+     *
+     * @param client client that was added.
+     * @param clientCount number of clients after adding the client.
+     */
+    public void showClientAdded(Client client, int clientCount) {
+        output.println("Got it. I've added this client:");
+        output.println("  " + client);
+        output.println(formatClientCount(clientCount));
+        output.println(LINE);
+    }
+
+    /**
+     * Shows the confirmation message for an edited client.
+     *
+     * @param client client that was edited.
+     */
+    public void showClientEdited(Client client) {
+        output.println("Got it. I've updated this client:");
+        output.println("  " + client);
+        output.println(LINE);
+    }
+
+    /**
+     * Shows the confirmation message for a deleted client.
+     *
+     * @param client client that was deleted.
+     * @param clientCount number of clients after deleting the client.
+     */
+    public void showClientDeleted(Client client, int clientCount) {
+        output.println("Noted. I've removed this client:");
+        output.println("  " + client);
+        output.println(formatClientCount(clientCount));
+        output.println(LINE);
+    }
+
+    /**
+     * Formats the current number of clients with the correct singular or plural noun.
+     *
+     * @param clientCount current number of clients.
+     * @return client-count message.
+     */
+    private String formatClientCount(int clientCount) {
+        String noun = clientCount == 1 ? "client" : "clients";
+        return "Now you have " + clientCount + " " + noun + " in the list.";
     }
 
     /**

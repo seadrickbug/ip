@@ -1,9 +1,7 @@
 package computah.command;
 
-import java.util.ArrayList;
-
+import computah.model.Model;
 import computah.storage.Storage;
-import computah.task.Task;
 import computah.ui.Ui;
 
 /**
@@ -19,12 +17,12 @@ public class ExitCommand extends Command {
     /**
      * Shows the farewell message.
      *
-     * @param tasks current task list.
+     * @param model current application data; unused for this command.
      * @param ui user interface used to display the farewell.
      * @param storage storage component; unused for this command.
      */
     @Override
-    public void execute(ArrayList<Task> tasks, Ui ui, Storage storage) {
+    public void execute(Model model, Ui ui, Storage storage) {
         ui.showFarewell();
     }
 

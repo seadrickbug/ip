@@ -1,12 +1,10 @@
 package computah;
 
-import java.util.ArrayList;
-
 import computah.command.Command;
 import computah.exception.ComputahException;
+import computah.model.Model;
 import computah.parser.Parser;
 import computah.storage.Storage;
-import computah.task.Task;
 import computah.ui.Ui;
 
 /**
@@ -26,12 +24,17 @@ public class Duke {
      */
     public static void main(String[] args) {
         Ui ui = new Ui();
-        Storage storage = new Storage("data/duke.txt");
+        Storage storage = new Storage("data/duke.txt", "data/clients.txt");
+        Model model = new Model();
         ui.showWelcome();
 
-        ArrayList<Task> tasks = new ArrayList<>();
         try {
-            tasks = storage.load();
+            model.getTasks().addAll(storage.loadTasks());
+        } catch (ComputahException e) {
+            ui.showError(e.getMessage());
+        }
+        try {
+            model.getClients().addAll(storage.loadClients());
         } catch (ComputahException e) {
             ui.showError(e.getMessage());
         }
@@ -39,8 +42,8 @@ public class Duke {
             String input = ui.readCommand();
             ui.showLine();
             try {
-                Command command = Parser.parse(input, tasks.size());
-                command.execute(tasks, ui, storage);
+                Command command = Parser.parse(input, model.getTaskCount(), model.getClientCount());
+                command.execute(model, ui, storage);
                 if (command.isExit()) {
                     break;
                 }
