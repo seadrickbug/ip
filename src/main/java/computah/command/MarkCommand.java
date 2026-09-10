@@ -32,6 +32,8 @@ public class MarkCommand extends Command {
      */
     @Override
     public void execute(ArrayList<Task> tasks, Ui ui, Storage storage) throws ComputahException {
+        assert taskIndex >= 0 && taskIndex < tasks.size()
+                : "Parser should supply an index of an existing task";
         tasks.get(taskIndex).markAsDone();
         storage.save(tasks);
         ui.showTaskMarked(tasks.get(taskIndex));
