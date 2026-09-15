@@ -58,4 +58,29 @@ public class ClientTest {
 
         assertEquals("Alice Tan [phone: 123] [email: alice@example.com]", client.toString());
     }
+
+    @Test
+    public void constructor_phoneWithLetters_exceptionThrown() {
+        ComputahException exception = assertThrows(ComputahException.class, () ->
+                new Client("Alice Tan", "call-me", ""));
+
+        assertEquals("The phone of a client may contain only digits, spaces, +, -, and parentheses.",
+                exception.getMessage());
+    }
+
+    @Test
+    public void constructor_malformedEmail_exceptionThrown() {
+        ComputahException exception = assertThrows(ComputahException.class, () ->
+                new Client("Alice Tan", "", "alice-at-example.com"));
+
+        assertEquals("The email of a client must be in the format name@example.com.", exception.getMessage());
+    }
+
+    @Test
+    public void constructor_nameWithoutLetterOrNumber_exceptionThrown() {
+        ComputahException exception = assertThrows(ComputahException.class, () ->
+                new Client("---", "", ""));
+
+        assertEquals("The name of a client must contain a letter or number.", exception.getMessage());
+    }
 }

@@ -830,3 +830,78 @@ Expected file `data/clients.txt`:
 ```text
 C | Alice |  |
 ```
+
+## Test Case: Handle Ambiguous And Malformed Parameters
+
+Aim: Verify that flexible whitespace is accepted while ambiguous parameters and malformed values are rejected.
+
+Inputs:
+```text
+   todo    spaced   task
+deadline report /by 2026-10-01 /by 2026-10-02
+event meeting /from 2026-10-02 /to 2026-10-01
+list extra
+bye now
+mark 1 2
+client add Alice /phone call-me
+client add Bob /email not-an-email
+client delete 1 2
+list
+bye
+```
+
+Expected output:
+```text
+____________________________________________________________
+  ____                            _        _
+ / ___|___  _ __ ___  _ __  _   _| |_ __ _| |__
+| |   / _ \| '_ ` _ \| '_ \| | | | __/ _` | '_ \
+| |__| (_) | | | | | | |_) | |_| | || (_| | | | |
+ \____\___/|_| |_| |_| .__/ \__,_|\__\__,_|_| |_|
+                     |_|
+
+Hello! I'm Computah.
+What can I do for you?
+____________________________________________________________
+____________________________________________________________
+Got it. I've added this task:
+  [T][ ] spaced task
+Now you have 1 tasks in the list.
+____________________________________________________________
+____________________________________________________________
+OOPS!!! The /by parameter can only be specified once.
+____________________________________________________________
+____________________________________________________________
+OOPS!!! The end date/time of an event cannot be before its start date/time.
+____________________________________________________________
+____________________________________________________________
+OOPS!!! The list command does not accept additional arguments.
+____________________________________________________________
+____________________________________________________________
+OOPS!!! The bye command does not accept additional arguments.
+____________________________________________________________
+____________________________________________________________
+OOPS!!! Please specify exactly one task number after mark.
+____________________________________________________________
+____________________________________________________________
+OOPS!!! The phone of a client may contain only digits, spaces, +, -, and parentheses.
+____________________________________________________________
+____________________________________________________________
+OOPS!!! The email of a client must be in the format name@example.com.
+____________________________________________________________
+____________________________________________________________
+OOPS!!! Please specify exactly one client number.
+____________________________________________________________
+____________________________________________________________
+Here are the tasks in your list:
+1.[T][ ] spaced task
+____________________________________________________________
+____________________________________________________________
+Bye. Hope to see you again soon!
+____________________________________________________________
+```
+
+Expected file `data/duke.txt`:
+```text
+T | 0 | spaced task
+```
