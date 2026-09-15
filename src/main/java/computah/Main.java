@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.stream.Collectors;
 
 import computah.command.Command;
 import computah.exception.ComputahException;
@@ -12,23 +13,33 @@ import computah.parser.Parser;
 import computah.storage.Storage;
 import computah.ui.Ui;
 import javafx.application.Application;
-import javafx.geometry.Insets;
+import javafx.application.Platform;
+import javafx.geometry.HPos;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 /**
  * Shows the JavaFX graphical interface for Computah.
  */
 public class Main extends Application {
+    private static final String CONSOLE_DIVIDER = "____________________________________________________________";
+
     private final Storage storage = new Storage("data/duke.txt", "data/clients.txt");
     private final Model model = new Model();
 
-    private TextArea dialogBox;
+    private VBox conversation;
+    private ScrollPane conversationPane;
     private TextField commandBox;
     private Button sendButton;
 
@@ -40,43 +51,89 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
-        dialogBox = new TextArea();
-        dialogBox.setEditable(false);
-        dialogBox.setWrapText(true);
+        conversation = new VBox(20);
+        conversation.getStyleClass().add("conversation");
+
+        conversationPane = new ScrollPane(conversation);
+        conversationPane.setFitToWidth(true);
+        conversationPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        conversationPane.getStyleClass().add("conversation-pane");
 
         commandBox = new TextField();
-        commandBox.setPromptText("Enter a command");
+        commandBox.setPromptText("Ask Computah to add, find, or update something...");
         commandBox.setOnAction(event -> handleUserCommand());
+        commandBox.getStyleClass().add("command-box");
 
         sendButton = new Button("Send");
         sendButton.setOnAction(event -> handleUserCommand());
+        sendButton.getStyleClass().add("send-button");
 
-        HBox inputArea = new HBox(8, commandBox, sendButton);
-        inputArea.setPadding(new Insets(8));
-        HBox.setHgrow(commandBox, javafx.scene.layout.Priority.ALWAYS);
+        HBox inputArea = new HBox(10, commandBox, sendButton);
+        inputArea.setAlignment(Pos.CENTER);
+        inputArea.getStyleClass().add("input-area");
+        HBox.setHgrow(commandBox, Priority.ALWAYS);
 
         BorderPane root = new BorderPane();
-        root.setCenter(dialogBox);
+        root.getStyleClass().add("root-pane");
+        root.setTop(createHeader());
+        root.setCenter(conversationPane);
         root.setBottom(inputArea);
 
         loadData();
-        appendWithDivider("Hello! I'm Computah.\nWhat can I do for you?");
+        appendAppMessage("Hello! I'm Computah.\nWhat can I do for you?");
 
         stage.setTitle("Computah");
-        stage.setScene(new Scene(root, 600, 400));
+        Scene scene = new Scene(root, 720, 560);
+        scene.getStylesheets().add(getClass().getResource("/computah/main.css").toExternalForm());
+        stage.setMinWidth(520);
+        stage.setMinHeight(420);
+        stage.setScene(scene);
         stage.show();
+        commandBox.requestFocus();
+    }
+
+    private GridPane createHeader() {
+        Label appMark = new Label("C");
+        appMark.getStyleClass().add("app-mark");
+
+        Label title = new Label("Computah");
+        title.getStyleClass().add("app-title");
+
+        Label description = new Label("TASK & CLIENT ASSISTANT");
+        description.getStyleClass().add("app-description");
+
+        VBox identity = new VBox(1, title, description);
+
+        Label status = new Label("READY");
+        status.getStyleClass().add("status-label");
+
+        GridPane header = new GridPane();
+        header.getStyleClass().add("header");
+        header.setHgap(12);
+        header.setAlignment(Pos.CENTER_LEFT);
+        header.add(appMark, 0, 0);
+        header.add(identity, 1, 0);
+        header.add(status, 2, 0);
+        GridPane.setHalignment(status, HPos.RIGHT);
+
+        ColumnConstraints markColumn = new ColumnConstraints();
+        ColumnConstraints identityColumn = new ColumnConstraints();
+        identityColumn.setHgrow(Priority.ALWAYS);
+        ColumnConstraints statusColumn = new ColumnConstraints();
+        header.getColumnConstraints().addAll(markColumn, identityColumn, statusColumn);
+        return header;
     }
 
     private void loadData() {
         try {
             model.getTasks().addAll(storage.loadTasks());
         } catch (ComputahException e) {
-            appendWithDivider("OOPS!!! " + e.getMessage());
+            appendAppMessage("OOPS!!! " + e.getMessage());
         }
         try {
             model.getClients().addAll(storage.loadClients());
         } catch (ComputahException e) {
-            appendWithDivider("OOPS!!! " + e.getMessage());
+            appendAppMessage("OOPS!!! " + e.getMessage());
         }
     }
 
@@ -98,7 +155,7 @@ public class Main extends Application {
                 sendButton.setDisable(true);
             }
         } catch (ComputahException e) {
-            appendWithDivider("OOPS!!! " + e.getMessage());
+            appendAppMessage("OOPS!!! " + e.getMessage());
         }
     }
 
@@ -113,16 +170,46 @@ public class Main extends Application {
     }
 
     private void appendCommand(String input) {
-        dialogBox.appendText(input + "\n");
+        Label message = new Label(input);
+        message.setWrapText(true);
+        message.setMaxWidth(420);
+        message.getStyleClass().add("user-message");
+
+        HBox row = new HBox(message);
+        row.setAlignment(Pos.CENTER_RIGHT);
+        row.getStyleClass().add("user-row");
+        conversation.getChildren().add(row);
+        scrollToLatestMessage();
     }
 
     private void appendResponse(String response) {
-        dialogBox.appendText(response + "\n");
+        String displayResponse = response.lines()
+                .filter(line -> !line.equals(CONSOLE_DIVIDER))
+                .collect(Collectors.joining("\n"));
+        appendAppMessage(displayResponse);
     }
 
-    private void appendWithDivider(String message) {
-        dialogBox.appendText("____________________________________________________________\n");
-        dialogBox.appendText(message + "\n");
-        dialogBox.appendText("____________________________________________________________\n");
+    private void appendAppMessage(String message) {
+        Label source = new Label("COMPUTAH");
+        source.getStyleClass().add("message-source");
+
+        Label content = new Label(message);
+        content.setWrapText(true);
+        content.setMaxWidth(Double.MAX_VALUE);
+        content.getStyleClass().add("app-message");
+
+        VBox response = new VBox(5, source, content);
+        response.setMaxWidth(Double.MAX_VALUE);
+        response.getStyleClass().add("app-response");
+
+        HBox row = new HBox(response);
+        row.getStyleClass().add("app-row");
+        HBox.setHgrow(response, Priority.ALWAYS);
+        conversation.getChildren().add(row);
+        scrollToLatestMessage();
+    }
+
+    private void scrollToLatestMessage() {
+        Platform.runLater(() -> conversationPane.setVvalue(1.0));
     }
 }
