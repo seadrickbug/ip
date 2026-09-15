@@ -66,7 +66,7 @@ public class Storage {
     public void saveTasks(ArrayList<Task> tasks) throws ComputahException {
         File dataFile = new File(taskFilePath);
         File dataDirectory = dataFile.getParentFile();
-        if (!dataDirectory.exists() && !dataDirectory.mkdirs()) {
+        if (dataDirectory != null && !dataDirectory.exists() && !dataDirectory.mkdirs()) {
             throw new ComputahException("I could not create the data directory.");
         }
         try (FileWriter writer = new FileWriter(dataFile)) {
@@ -109,7 +109,7 @@ public class Storage {
     public void saveClients(ArrayList<Client> clients) throws ComputahException {
         File dataFile = new File(clientFilePath);
         File dataDirectory = dataFile.getParentFile();
-        if (!dataDirectory.exists() && !dataDirectory.mkdirs()) {
+        if (dataDirectory != null && !dataDirectory.exists() && !dataDirectory.mkdirs()) {
             throw new ComputahException("I could not create the data directory.");
         }
         try (FileWriter writer = new FileWriter(dataFile)) {
