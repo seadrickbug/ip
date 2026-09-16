@@ -38,11 +38,11 @@ From the project root, create the JAR:
 The generated JAR is located at:
 
 ```text
-build/libs/duke.jar
+build/libs/computah.jar
 ```
 
 Run it with:
 
 ```bash
-java -jar build/libs/duke.jar
+java -jar build/libs/computah.jar
 ```
