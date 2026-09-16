@@ -119,7 +119,7 @@ def print_transcript(test_case, actual):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--plan", default="test/ui-test-plan.md")
-    parser.add_argument("--main-class", default="computah.Duke")
+    parser.add_argument("--main-class", default="computah.Computah")
     parser.add_argument("--build-dir", default="/tmp/cs2103-ip-ui-tests")
     args = parser.parse_args()
 

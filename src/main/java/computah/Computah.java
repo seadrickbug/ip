@@ -10,11 +10,11 @@ import computah.ui.Ui;
 /**
  * Entry point and main coordinator for the Computah chatbot.
  */
-public class Duke {
+public class Computah {
     /**
      * Prevents instantiation of this entry-point class.
      */
-    private Duke() {
+    private Computah() {
     }
 
     /**
